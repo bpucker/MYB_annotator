@@ -7,9 +7,9 @@ This tool allows an automatic identification and analysis of MYBs in a CDS or pe
 
 There is no installation of this tool required. Downloading and executing the script is sufficient. Most required modules should be included in the initial Python installation. Requirements are (Linux installation instructions):
 
-Python3 (sudo apt-get install python3.8)
+[Python3](https://www.python.org/) (sudo apt-get install python3.8)
 
-dendropy (python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git)
+[dendropy](https://dendropy.readthedocs.io/en/main/) (python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git)
 
 
 
@@ -65,9 +65,9 @@ Optional:
 
 `--blastp` specifies the full path to [BLASTp](https://dx.doi.org/10.1093%2Fnar%2F25.17.3389) including the binary.
 
-`--fasttree` specifies .
+`--fasttree` specifies the full path to [FastTree2](https://doi.org/10.1371/journal.pone.0009490).
 
-`--raxml` specifies .
+`--raxml` specifies the full path to [RAxML](https://doi.org/10.1093/bioinformatics/btz305).
 
 `--simcutp` specifies .
 
