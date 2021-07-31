@@ -1,6 +1,9 @@
 # Automatic annotation of MYBs
 
+## Background ##
 This tool allows an automatic identification and analysis of MYBs in a CDS or peptide sequence collection. Since the quality of structural annotation has substantially improved during the last years, the focus can now shift towards functional annotation. There are numerous publications about R2R3-MYBs in various plant species. This tools allows the automatic investigation of the MYB gene family in any new species. Results are a FASTA file containing the bona fide MYB sequences and a summary table with additional details.
+
+## Usage ##
 
 ```
 Usage
@@ -31,6 +34,41 @@ Optional:
 ```
 
 `--baits` specifies a FASTA file that contains the MYB bait sequences. Some of these sequences are _bona fide_ MYBs and other are MYB-like sequences that are used as outgroup.
+
+
+`--info` specifies .
+
+`--out` specifies .
+
+`--subject` specifies .
+
+`--subjectdir` specifies .
+
+`--mode` specifies .
+
+`--refmybs` specifies .
+
+`--cpu` specifies .
+
+`--cdsinput` specifies .
+
+`--mafft` specifies .
+
+`--blastp` specifies .
+
+`--fasttree` specifies .
+
+`--raxml` specifies .
+
+`--simcutp` specifies .
+
+`--poscutp` specifies .
+
+`--lencutp` specifies .
+
+
+
+## Example ##
 
 
 
