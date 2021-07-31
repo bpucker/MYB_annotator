@@ -1,4 +1,4 @@
-# MYB_annotator
+# Automatic annotation of MYBs
 
 This tool allows an automatic identification and analysis of MYBs in a CDS or peptide sequence collection. Since the quality of structural annotation has substantially improved during the last years, the focus can now shift towards functional annotation. There are numerous publications about R2R3-MYBs in various plant species. This tools allows the automatic investigation of the MYB gene family in any new species. Results are a FASTA file containing the bona fide MYB sequences and a summary table with additional details.
 
@@ -19,18 +19,18 @@ Optional:
 --cpu           INT     Number of threads [4]
 --cdsinput      STR     Changes expected input to CDS
 					
---mafft <PATH_TO_MAFFT>[mafft]
---blastp <PATH_TO_AND_INCLUDING_BINARY>[blastp]
---makeblastdb <PATH_TO_AND_INCLUDING_BINARY>[makeblastdb]			
---fasttree <PATH_TO_FASTTREE>[fasttree]
---raxml <PATH_TO_RAXML>[raxml]				
+--mafft         STR     Path to MAFFT [mafft]
+--blastp        STR     Path to blastp [blastp]
+--makeblastdb   STR     Path to makeblastdb [makeblastdb]			
+--fasttree      STR     Path to FastTree [fasttree]
+--raxml         STR     Path to RAxML [raxml]				
 					
---simcutp <BLASTP_SIMILARITY_CUTOFF>[0.8]
---poscutp <BLASTP_HIT_NUMBER_PER_BAIT_CUTOFF>[100]
---lencutp	<BLASTP_MIN_LENGTH_CUTOFF>[50]
+--simcutp       FLOAT   BLASTp similarity cutoff [0.8]
+--poscutp       INT     Max number of BLASTp hits per bait [100]
+--lencutp	INT     Min BLASTp alignment length [50]
 ```
 
-`--gff` specifies a GFF3 file. It is important that the IDs of mRNAs in this file are matching the IDs of the coding sequences in the FASTA file.
+`--baits` specifies a FASTA file that contains the MYB bait sequences. Some of these sequences are _bona fide_ MYBs and other are MYB-like sequences that are used as outgroup.
 
 
 
