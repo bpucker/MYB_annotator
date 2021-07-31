@@ -88,7 +88,7 @@ python3 /my_folder/MYB_annotator.py \
 --out /my_folder/test_analysis/ \
 --subject /my_folder/data/Croton_tiglium_peptides.fasta \
 --mode raxml \
---refmybs /my_folder/data/ref_MYBs.txt \
+--refmybs /my_folder/data/Ath_ref_MYBs.txt \
 --raxml /my_folder/bin/RAxML9/raxml-ng \
 ```
 
