@@ -92,6 +92,22 @@ python3 /my_folder/MYB_annotator.py \
 --raxml /my_folder/bin/RAxML9/raxml-ng \
 ```
 
+## Data sets ##
+
+The MYB bait sequences are intended to cover a broad phylogenetic range. The data sets comprises the MYBs of:
+
+_Arabidopsis thaliana_ ([Stracke et al., 2001](https://doi.org/10.1016/S1369-5266(00)00199-0))
+
+_Medicago truncatula_ ([Naik et al., 2021](https://doi.org/10.1007/s11103-021-01135-x))
+
+_Beta vulgaris_ ([Stracke et al., 2014](https://doi.org/10.1186/s12870-014-0249-8))
+
+_Vitis vinifera_ ([Matus et al., 2008](https://doi.org/10.1186/1471-2229-8-83))
+
+_Musa acuminata_ ([Pucker et al., 2020](https://doi.org/10.1371/journal.pone.0239275))
+
+
+
 
 ## References ##
 
