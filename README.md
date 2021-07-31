@@ -79,9 +79,11 @@ Optional:
 
 ## Example ##
 
+This example should help to understand how the script is used. The required MYB baits FASTA file, the MYB info, and the optional reference MYB file (_Arabidopsis thaliana_ MYBs) are included in this repository.
+
 ```
-python3 /my_folder/MYB_annotator.py \\
---baits /my_folder/data/bait_MYBs.fasta \\
+python3 /my_folder/MYB_annotator.py \
+--baits /my_folder/data/bait_MYBs.fasta \
 --info /my_folder/data/bait_MYBs.txt \
 --out /my_folder/test_analysis/ \
 --subject /my_folder/data/Croton_tiglium_peptides.fasta \
