@@ -523,12 +523,17 @@ def main( arguments ):
 	bait_seq_file = arguments[ arguments.index('--baits')+1 ]
 	info_file = arguments[ arguments.index('--info')+1 ]
 	output_folder = arguments[ arguments.index('--out')+1 ]
-	raw_subject_file = arguments[ arguments.index('--subject')+1 ]
-	
-	if output_folder[-1] != "/":
-		output_folder += "/"
-	if not os.path.exists( output_folder ):
-		os.makedirs( output_folder )
+	if '--subject' in arguments:
+		raw_subject_files = [ arguments[ arguments.index('--subject')+1 ] ]
+	else:
+		subject_file_dir = arguments[ arguments.index('--subjectdir')+1 ]
+		if not subject_file_dir[-1] == "/":
+			subject_file_dir + "/"
+		extensions = [ ".fasta", ".fa", ".fas", ".FASTA", ".FA", ".FAS" ]
+		raw_subject_files = [ ]
+		for each in extensions:
+			raw_subject_files += glob.glob( subject_file_dir + "*" + each )
+		raw_subject_files = list( sorted( raw_subject_files ) )
 	
 	if '--mode' in arguments:
 		mode = arguments[ arguments.index('--mode')+1 ]
@@ -586,138 +591,156 @@ def main( arguments ):
 	else:
 		cds_input = False
 	
-	# --- validation of inputs --- #
-	#check if all MYB baits are listed in the info file
-	subject_file = output_folder + "clean_subject_sequences.fasta"
-	mapping_table = output_folder + "raw_subject_to_clean_subject_mapping_table.txt"
-	if not os.path.isfile( subject_file ):
-		clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_input )	#remove illegal characters from subject sequence headers
-	MYB_check_status = check_MYB_IDs_across_files( bait_seq_file, info_file, ref_mybs_file )
-	if not MYB_check_status:
-		sys.exit( "ERROR: analysis is stopped due to inconstistency of MYB IDs between files" )
+	if output_folder[-1] != "/":
+		output_folder += "/"
+	if not os.path.exists( output_folder ):
+		os.makedirs( output_folder )
 	
-	result_folder = output_folder + "RESULTS/"
-	if not os.path.exists( result_folder ):
-		os.makedirs( result_folder )
-	
-	doc_file = result_folder + "0_documentation.txt"
-	generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_folder, raw_subject_file,
-														mode, blastp, makeblastdb, mafft, cpu, raxml, fasttree, ref_mybs_file,
-														similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input
-													)
+	for jidx, raw_subject_file in enumerate( raw_subject_files ):	#use jidx to generate unique IDs for all jobs
+		# --- prepare output folder for each job if there are multiple --- #
+		if len( raw_subject_files ) == 1:
+			job_output_folder = output_folder
+		else:
+			job_ID = raw_subject_file.split('/')[-1].split('.')[0]
+			job_output_folder = output_folder + str( jidx ).zfill(5) + "_" + job_ID + "/"
 		
+		if not os.path.exists( job_output_folder ):
+			os.makedirs( job_output_folder )
 	
-	# --- find initial candidates --- #
-	blast_result_file = output_folder + "blast_results.fasta"
-	if not os.path.isfile( blast_result_file ):
-		blast_db = output_folder + "blastdb"
-		p = subprocess.Popen( args= makeblastdb + " -in " + subject_file + " -out " + blast_db + " -dbtype prot", shell=True )
-		p.communicate()
+		# --- validation of inputs --- #
+		#check if all MYB baits are listed in the info file
+		subject_file = job_output_folder + "clean_subject_sequences.fasta"
+		mapping_table = job_output_folder + "raw_subject_to_clean_subject_mapping_table.txt"
+		if not os.path.isfile( subject_file ):
+			clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_input )	#remove illegal characters from subject sequence headers
+		MYB_check_status = check_MYB_IDs_across_files( bait_seq_file, info_file, ref_mybs_file )
+		if not MYB_check_status:
+			sys.exit( "ERROR: analysis is stopped due to inconstistency of MYB IDs between files" )
 		
-		p = subprocess.Popen( args= "blastp -query " + bait_seq_file + " -db " + blast_db + " -out " + blast_result_file + " -outfmt 6 -evalue 0.001 -num_threads " + str( cpu ), shell=True )
-		p.communicate()
-	
-	blast_results = load_BLAST_results( blast_result_file, similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p )	#load valid BLASTp results
-	
-	subject_sequences = load_sequences( subject_file )
-	candidate_file = result_folder + "1_initial_candidates.fasta"
-	with open( candidate_file, "w" ) as out:
-		for each in blast_results.keys():
-			out.write( '>' + each + "\n" + subject_sequences[ each ] + "\n" )
-	
-	# --- construct phylogenetic tree --- #
-	aln_input_file = output_folder + "alignment_input.fasta"
-	if not os.path.isfile( aln_input_file ):
-		p = subprocess.Popen( args= "cat " + bait_seq_file + " " + candidate_file + " > " + aln_input_file, shell=True )
-		p.communicate()
-	
-	aln_file = output_folder + "alignment_input.fasta.aln"
-	if not os.path.isfile( aln_file ):
-		p = subprocess.Popen( args= mafft + " " + aln_input_file + " > " + aln_file, shell=True )
-		p.communicate()
-	
-	cln_aln_file = output_folder + "alignment_input.fasta.aln.cln"
-	if not os.path.isfile( cln_aln_file ):
-		alignment_trimming( aln_file, cln_aln_file, occupancy=0.1 )
-	
-	if mode == "raxml":	#RAxML
-		prefix = output_folder + "RAxML_tree"
-		tree_file = prefix + ".raxml.bestTree"
-		if not os.path.isfile( tree_file ):
-			p = subprocess.Popen( args= " ".join( [ raxml, "--all --threads " + str( cpu ) + " --model LG+G8+F --msa", cln_aln_file, "--prefix", prefix ] ), shell=True )
-			p.communicate()
-	else:	#FastTree2
-		tree_file = output_folder + "FastTree_tree.tre"
-		if not os.path.isfile( tree_file ):
-			p = subprocess.Popen( args= " ".join( [ fasttree, "-wag -nosupport <", cln_aln_file, ">", tree_file ] ), shell=True )
-			p.communicate()
-	
-	# --- analyze tree file --- #
-	clean_mybs_file = result_folder + "2a_clean_MYBs.fasta"
-	tmp_result_table = result_folder + "2b_in_out_MYB_analysis_results.txt"
-	if not os.path.isfile( tmp_result_table ):
-		in_list, out_list = load_bait_MYB_anno( info_file )
-		sys.stdout.write( "Number of ingroup MYB baits: " + str( len( in_list ) ) + "\n" )
-		sys.stdout.write( "Number of outgroup MYB baits: " + str( len( out_list ) ) + "\n" )
-		sys.stdout.flush()
-		myb_classification = split_into_ingroup_and_outgroup( tree_file, in_list, out_list )
-		#dictionary with subject IDs: values are in the range of 0 (no MYB) to 1 (MYB)
+		result_folder = job_output_folder + "RESULTS/"
+		if not os.path.exists( result_folder ):
+			os.makedirs( result_folder )
 		
-		with open( clean_mybs_file, "w" ) as out:
-			with open( tmp_result_table, "w" ) as out2:
-				out2.write( "ID\tScore\n" )
-				candidate_order = list( sorted( myb_classification.keys() ) )
-				for candidate in candidate_order:
-					if myb_classification[ candidate ] > 0.5:
-						out.write( '>' + candidate + "\n" + subject_sequences[ candidate ] + "\n" )
-					out2.write( candidate + "\t" + str( myb_classification[ candidate ] ) + "\n" )
-	else:
-		myb_classification = load_myb_classification_from_file( tmp_result_table )
-	
-	
-	# --- find closest reference MYB --- #
-	if len( ref_mybs_file ) > 0:	#only performed if reference MYB file is provided
-		group_around_ref_myb_file = result_folder + "3a_group_around_ref_MYBs.txt"	#produce table sorted by reference MYBs
-		new_2_ref_myb_mapping_file = result_folder + "3b_new_2_ref_myb_mapping_file.txt"	#produce table sorted by subject sequences
-		if not os.path.isfile( new_2_ref_myb_mapping_file ):
-			ref_mybs = load_ref_mybs( ref_mybs_file )	#load IDs and trivial name from additional text file (dictionary)
-			new2ref_mapping_table, new_per_ref_myb = myb_group_assignment( ref_mybs, tree_file, myb_classification.keys() )
-	
-			with open( group_around_ref_myb_file, "w" ) as out:
-				out.write( "RefMYB\tNewMYBs\n" )
-				gene_order = list( sorted( new_per_ref_myb.keys() ) )
-				for gene in gene_order:
-					out.write( gene + "\t" + ";".join( new_per_ref_myb[ gene ] ) + "\n" )		
+		doc_file = result_folder + "0_documentation.txt"
+		generate_documentation_file( 	doc_file, bait_seq_file, info_file, job_output_folder, raw_subject_file,
+															mode, blastp, makeblastdb, mafft, cpu, raxml, fasttree, ref_mybs_file,
+															similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input
+														)
 			
-			with open( new_2_ref_myb_mapping_file, "w" ) as out:
-				out.write( "NewMYB\tRefMYBs\n" )
-				gene_order = list( sorted( new2ref_mapping_table.keys() ) )
-				for gene in gene_order:
-					out.write( gene + "\t" + new2ref_mapping_table[ gene ] + "\n" )
-	
-	# --- check for presence of R2R3 MYB domain --- #
-	myb_domain_check_file = result_folder + "4_R2R3_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
-	if not os.path.isfile( myb_domain_check_file ):
-		clean_candidate_myb_sequences = load_sequences( clean_mybs_file )
-		r2r3_domains = R2R3_comain_check( clean_candidate_myb_sequences )	#based on banana MYB paper: https://doi.org/10.1371/journal.pone.0239275
-		proper_R2R3_MYB_counter = 0
-		with open( myb_domain_check_file, "w" ) as out:
-			out.write( "GeneID\tR2R3-MYB domain status\tR2R3-MYB domain\n" )
-			candidates = list( sorted( clean_candidate_myb_sequences.keys() ) )
-			for candidate in candidates:
-				if len( r2r3_domains[ candidate ] ) > 0:
-					out.write( "\t".join( [ candidate, "1", r2r3_domains[ candidate ] ] ) + "\n" )
-					proper_R2R3_MYB_counter += 1
-				else:
-					out.write( "\t".join( [ candidate, "0", "" ] ) + "\n" )
-		sys.stdout.write( "Number of proper R2R3-MYBs: " + str( proper_R2R3_MYB_counter ) + "\n" )
-		sys.stdout.flush()
-	
-	#construct a final tree
-	
+		
+		# --- find initial candidates --- #
+		blast_result_file = job_output_folder + "blast_results.fasta"
+		if not os.path.isfile( blast_result_file ):
+			blast_db = job_output_folder + "blastdb"
+			p = subprocess.Popen( args= makeblastdb + " -in " + subject_file + " -out " + blast_db + " -dbtype prot", shell=True )
+			p.communicate()
+			
+			p = subprocess.Popen( args= "blastp -query " + bait_seq_file + " -db " + blast_db + " -out " + blast_result_file + " -outfmt 6 -evalue 0.001 -num_threads " + str( cpu ), shell=True )
+			p.communicate()
+		
+		blast_results = load_BLAST_results( blast_result_file, similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p )	#load valid BLASTp results
+		
+		subject_sequences = load_sequences( subject_file )
+		candidate_file = result_folder + "1_initial_candidates.fasta"
+		with open( candidate_file, "w" ) as out:
+			for each in blast_results.keys():
+				out.write( '>' + each + "\n" + subject_sequences[ each ] + "\n" )
+		
+		# --- construct phylogenetic tree --- #
+		aln_input_file = job_output_folder + "alignment_input.fasta"
+		if not os.path.isfile( aln_input_file ):
+			p = subprocess.Popen( args= "cat " + bait_seq_file + " " + candidate_file + " > " + aln_input_file, shell=True )
+			p.communicate()
+		
+		aln_file = job_output_folder + "alignment_input.fasta.aln"
+		if not os.path.isfile( aln_file ):
+			p = subprocess.Popen( args= mafft + " " + aln_input_file + " > " + aln_file, shell=True )
+			p.communicate()
+		
+		cln_aln_file = job_output_folder + "alignment_input.fasta.aln.cln"
+		if not os.path.isfile( cln_aln_file ):
+			alignment_trimming( aln_file, cln_aln_file, occupancy=0.1 )
+		
+		if mode == "raxml":	#RAxML
+			prefix = job_output_folder + "RAxML_tree"
+			tree_file = prefix + ".raxml.bestTree"
+			if not os.path.isfile( tree_file ):
+				p = subprocess.Popen( args= " ".join( [ raxml, "--all --threads " + str( cpu ) + " --model LG+G8+F --msa", cln_aln_file, "--prefix", prefix ] ), shell=True )
+				p.communicate()
+		else:	#FastTree2
+			tree_file = job_output_folder + "FastTree_tree.tre"
+			if not os.path.isfile( tree_file ):
+				p = subprocess.Popen( args= " ".join( [ fasttree, "-wag -nosupport <", cln_aln_file, ">", tree_file ] ), shell=True )
+				p.communicate()
+		
+		# --- analyze tree file --- #
+		clean_mybs_file = result_folder + "2a_clean_MYBs.fasta"
+		tmp_result_table = result_folder + "2b_in_out_MYB_analysis_results.txt"
+		if not os.path.isfile( tmp_result_table ):
+			in_list, out_list = load_bait_MYB_anno( info_file )
+			sys.stdout.write( "Number of ingroup MYB baits: " + str( len( in_list ) ) + "\n" )
+			sys.stdout.write( "Number of outgroup MYB baits: " + str( len( out_list ) ) + "\n" )
+			sys.stdout.flush()
+			myb_classification = split_into_ingroup_and_outgroup( tree_file, in_list, out_list )
+			#dictionary with subject IDs: values are in the range of 0 (no MYB) to 1 (MYB)
+			
+			with open( clean_mybs_file, "w" ) as out:
+				with open( tmp_result_table, "w" ) as out2:
+					out2.write( "ID\tScore\n" )
+					candidate_order = list( sorted( myb_classification.keys() ) )
+					for candidate in candidate_order:
+						if myb_classification[ candidate ] > 0.5:
+							out.write( '>' + candidate + "\n" + subject_sequences[ candidate ] + "\n" )
+						out2.write( candidate + "\t" + str( myb_classification[ candidate ] ) + "\n" )
+		else:
+			myb_classification = load_myb_classification_from_file( tmp_result_table )
+		
+		
+		# --- find closest reference MYB --- #
+		if len( ref_mybs_file ) > 0:	#only performed if reference MYB file is provided
+			group_around_ref_myb_file = result_folder + "3a_group_around_ref_MYBs.txt"	#produce table sorted by reference MYBs
+			new_2_ref_myb_mapping_file = result_folder + "3b_new_2_ref_myb_mapping_file.txt"	#produce table sorted by subject sequences
+			if not os.path.isfile( new_2_ref_myb_mapping_file ):
+				ref_mybs = load_ref_mybs( ref_mybs_file )	#load IDs and trivial name from additional text file (dictionary)
+				new2ref_mapping_table, new_per_ref_myb = myb_group_assignment( ref_mybs, tree_file, myb_classification.keys() )
+		
+				with open( group_around_ref_myb_file, "w" ) as out:
+					out.write( "RefMYB\tNewMYBs\n" )
+					gene_order = list( sorted( new_per_ref_myb.keys() ) )
+					for gene in gene_order:
+						out.write( gene + "\t" + ";".join( new_per_ref_myb[ gene ] ) + "\n" )		
+				
+				with open( new_2_ref_myb_mapping_file, "w" ) as out:
+					out.write( "NewMYB\tRefMYBs\n" )
+					gene_order = list( sorted( new2ref_mapping_table.keys() ) )
+					for gene in gene_order:
+						out.write( gene + "\t" + new2ref_mapping_table[ gene ] + "\n" )
+		
+		# --- check for presence of R2R3 MYB domain --- #
+		myb_domain_check_file = result_folder + "4_R2R3_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
+		if not os.path.isfile( myb_domain_check_file ):
+			clean_candidate_myb_sequences = load_sequences( clean_mybs_file )
+			r2r3_domains = R2R3_comain_check( clean_candidate_myb_sequences )	#based on banana MYB paper: https://doi.org/10.1371/journal.pone.0239275
+			proper_R2R3_MYB_counter = 0
+			with open( myb_domain_check_file, "w" ) as out:
+				out.write( "GeneID\tR2R3-MYB domain status\tR2R3-MYB domain\n" )
+				candidates = list( sorted( clean_candidate_myb_sequences.keys() ) )
+				for candidate in candidates:
+					if len( r2r3_domains[ candidate ] ) > 0:
+						out.write( "\t".join( [ candidate, "1", r2r3_domains[ candidate ] ] ) + "\n" )
+						proper_R2R3_MYB_counter += 1
+					else:
+						out.write( "\t".join( [ candidate, "0", "" ] ) + "\n" )
+			sys.stdout.write( "Number of proper R2R3-MYBs: " + str( proper_R2R3_MYB_counter ) + "\n" )
+			sys.stdout.flush()
+		
+		#construct a final tree
+		
 
 
 if '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subject' in sys.argv:
+	main( sys.argv )
+elif '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subjectdir' in sys.argv:
 	main( sys.argv )
 else:
 	sys.exit( __usage__ )
