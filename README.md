@@ -3,6 +3,16 @@
 ## Background ##
 This tool allows an automatic identification and analysis of MYBs in a CDS or peptide sequence collection. Since the quality of structural annotation has substantially improved during the last years, the focus can now shift towards functional annotation. RNA-seq and long read sequencing of transcripts were fundamental for this development. There are numerous publications about R2R3-MYBs in various plant species. This tools allows the automatic investigation of the MYB gene family in any new species. Results are a FASTA file containing the bona fide MYB sequences and a summary table with additional details.
 
+## Installation ##
+
+There is no installation of this tool required. Downloading and executing the script is sufficient. Most required modules should be included in the initial Python installation. Requirements are (Linux installation instructions):
+
+Python3 (sudo apt-get install python3.8)
+
+dendropy (python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git)
+
+
+
 ## Usage ##
 
 ```
