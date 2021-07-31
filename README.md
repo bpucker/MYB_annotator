@@ -1,7 +1,7 @@
 # Automatic annotation of MYBs
 
 ## Background ##
-This tool allows an automatic identification and analysis of MYBs in a CDS or peptide sequence collection. Since the quality of structural annotation has substantially improved during the last years, the focus can now shift towards functional annotation. There are numerous publications about R2R3-MYBs in various plant species. This tools allows the automatic investigation of the MYB gene family in any new species. Results are a FASTA file containing the bona fide MYB sequences and a summary table with additional details.
+This tool allows an automatic identification and analysis of MYBs in a CDS or peptide sequence collection. Since the quality of structural annotation has substantially improved during the last years, the focus can now shift towards functional annotation. RNA-seq and long read sequencing of transcripts were fundamental for this development. There are numerous publications about R2R3-MYBs in various plant species. This tools allows the automatic investigation of the MYB gene family in any new species. Results are a FASTA file containing the bona fide MYB sequences and a summary table with additional details.
 
 ## Usage ##
 
@@ -43,17 +43,17 @@ Optional:
 
 `--subjectdir` specifies a folder with FASTA files. All files need to contain sequences of the same type (PEP or CDS).
 
-`--mode` specifies .
+`--mode` specifies the tool for the construction of phylogenetic trees. [RAxML](https://doi.org/10.1093/bioinformatics/btz305) ('raxml') or [FastTree2](https://doi.org/10.1371/journal.pone.0009490) ('fasttree') can be specified. Default is 'raxml'.
 
-`--refmybs` specifies .
+`--refmybs` specifies a text file with one MYB ID per line. All IDs listed in this file need to be present in the baits FASTA file and the info file. These IDs can be used for the functional annotation of the newly identified MYBs. This assignment is performed in two ways leading to two different output tables.
 
-`--cpu` specifies .
+`--cpu` specifies threads to use for the BLASTp search and also for the RAxML tree construction. Default: 4.
 
-`--cdsinput` specifies .
+`--cdsinput` changes the input expectation from PEP to CDS. The file needs to be supplied through the `--subject`. This flag can be included at any place in the command.
 
-`--mafft` specifies .
+`--mafft` specifies the full path to [MAFFT](https://doi.org/10.1093/molbev/mst010) including the binary.
 
-`--blastp` specifies .
+`--blastp` specifies the full path to [BLASTp](https://dx.doi.org/10.1093%2Fnar%2F25.17.3389) including the binary.
 
 `--fasttree` specifies .
 
