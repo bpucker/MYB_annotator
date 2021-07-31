@@ -79,6 +79,16 @@ Optional:
 
 ## Example ##
 
+```
+python3 /my_folder/MYB_annotator.py \\
+--baits /my_folder/data/bait_MYBs.fasta \\
+--info /my_folder/data/bait_MYBs.txt \
+--out /my_folder/test_analysis/ \
+--subject /my_folder/data/Croton_tiglium_peptides.fasta \
+--mode raxml \
+--refmybs /my_folder/data/ref_MYBs.txt \
+--raxml /my_folder/bin/RAxML9/raxml-ng \
+```
 
 
 ## References ##
