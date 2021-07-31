@@ -35,14 +35,13 @@ Optional:
 
 `--baits` specifies a FASTA file that contains the MYB bait sequences. Some of these sequences are _bona fide_ MYBs and other are MYB-like sequences that are used as outgroup.
 
+`--info` specifies a text file that contains a table with all MYB IDs (matching the baits FASTA file) in the first column. Columns are TAB-separted. The second column contains an assignment to the ingroup ('in') or outgroup ('out'). Ingroup and outgroup baits are used to classify MYB candidates as _bona fide_ MYBs or MYB-likes.
 
-`--info` specifies .
+`--out` specifies the output folder. This folder will be created if it does not exist already. All files generated during the analysis will be placed in this folder. There is a subfolder called 'RESULTS' that contains the important final files.
 
-`--out` specifies .
+`--subject` specifies the FASTA file that should be analysed. The default expectation is that this file contains peptide sequences. However, it is also possible to supply a collection of coding sequences (CDS) if the `--cdsinput` flag is set.
 
-`--subject` specifies .
-
-`--subjectdir` specifies .
+`--subjectdir` specifies a folder with FASTA files. All files need to contain sequences of the same type (PEP or CDS).
 
 `--mode` specifies .
 
