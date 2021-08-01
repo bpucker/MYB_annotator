@@ -5,7 +5,7 @@ This tool allows an automatic identification and analysis of MYBs in a CDS or pe
 
 ## Installation ##
 
-There is no installation of this tool required. Downloading and executing the script is sufficient. Most required modules should be included in the initial Python installation. Requirements are (Linux installation instructions):
+There is no installation of this tool required. Downloading and executing the script on a Linux system is sufficient. There is currently no support for other operating systems. Most required modules should be included in the initial Python installation. Requirements are (Linux installation instructions):
 
 [Python3](https://www.python.org/) (sudo apt-get install python3.8)
 
