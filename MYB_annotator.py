@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.1"
+__version__ = "v0.11"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -142,6 +142,7 @@ def split_into_ingroup_and_outgroup( tree_file, in_list, out_list, neighbour_cut
 	
 	# --- find node objects of reference genes --- #
 	tree = dendropy.Tree.get_from_path( tree_file, "newick" )
+	pdm = dendropy.PhylogeneticDistanceMatrix.from_tree( tree )
 	ref_node_objects = {}
 	for node in tree.taxon_namespace:
 		try:
@@ -156,16 +157,17 @@ def split_into_ingroup_and_outgroup( tree_file, in_list, out_list, neighbour_cut
 		ref_gene_nodes.append( ref_node_objects[ gene ] )
 		ref_gene_nodes_dict_to_check.update( { ref_node_objects[ gene ]: None } )
 	
+	
 	results = {}
 	for i, t1 in enumerate( tree.taxon_namespace ):
 		try:
 			ref_gene_nodes_dict_to_check[ t1 ]
 		except KeyError:	#only run analysis for non-reference sequences
-			if len( results.keys() ) % 10 == 0:
-				print ( str( len( results.keys() ) ) + "/" + str( len( tree.taxon_namespace )-len( ref_gene_nodes_dict_to_check.keys() ) ) )
+			#if len( results.keys() ) % 10 == 0:
+			#	print ( str( len( results.keys() ) ) + "/" + str( len( tree.taxon_namespace )-len( ref_gene_nodes_dict_to_check.keys() ) ) )
 			distances = []
 			for t2 in ref_gene_nodes:	#calculate distance to all other sequences in tree
-				distance = dendropy.calculate.treemeasure.patristic_distance( tree, t1, t2)
+				distance = pdm.path_edge_count( t1, t2)
 				distances.append( distance )
 			in_counter = 0
 			out_counter = 0
@@ -326,6 +328,7 @@ def myb_group_assignment( ref_mybs, tree_file, myb_candidates ):
 	
 	# --- find node objects of reference genes --- #
 	tree = dendropy.Tree.get_from_path( tree_file, "newick" )
+	pdm = dendropy.PhylogeneticDistanceMatrix.from_tree( tree )
 	ref_node_objects = {}
 	new_node_objects = {}
 	for node in tree.taxon_namespace:
@@ -351,10 +354,10 @@ def myb_group_assignment( ref_mybs, tree_file, myb_candidates ):
 		canidate_gene_nodes_dict_to_check.update( { new_node_objects[ gene ]: None } )
 	
 	for i, t1 in enumerate( candidate_gene_nodes ):
-		print ( "ref matching - " + str( i+1 ) + "/" + str( len( candidate_gene_nodes ) ) )
+		#print ( "ref matching - " + str( i+1 ) + "/" + str( len( candidate_gene_nodes ) ) )
 		distances = []
 		for t2 in ref_gene_nodes:	#calculate distance to all other sequences in tree
-			distance = dendropy.calculate.treemeasure.patristic_distance( tree, t1, t2)
+			distance = pdm.path_edge_count( t1, t2)
 			distances.append( distance )
 		ref_myb = my_ref_mybs[ distances.index( min( distances ) ) ]
 		new2ref_mapping_table[ t1.label ] = ref_myb
@@ -515,6 +518,21 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 		out.write( "Minimal BLASTp hit similarity cutoff: " + str( similarity_cutoff_p ) + "\n" )
 		out.write( "Maximal number of BLASTp hits per bait: " + str( possibility_cutoff_p ) + "\n" )
 		out.write( "Minimal BLASTp hit alignment length: " + str( length_cutoff_p ) + "\n" )
+		
+		# --- add tool versions --- #
+		try:
+			mafft_version_raw = subprocess.Popen( args=mafft + " --version", stderr=subprocess.PIPE, shell=True )
+			mafft_version = mafft_version_raw.stderr.read()
+			out.write ( "MAFFT version: " + str( mafft_version )[2:-3] + "\n" )	#remove characters introduced through binary
+		except:
+			out.write ( "MAFFT version detection failed.\n" )	#if no MAFFT installation was detected
+		out.write ( "FastTree version: PLEASE_ADD_MANUALLY\n"  )	#version not available via command
+		try:
+			raxml_version_raw = subprocess.Popen( args=raxml + " --version", stdout=subprocess.PIPE, shell=True )
+			raxml_version = str( raxml_version_raw.stdout.read() ).strip()
+			out.write ( "RAxML version: " + ( raxml_version[4:65]) + "...\n" )	#remove characters introduced through binary
+		except:
+			out.write ( "RAxML version detection failed.\n" )	#if no RAxML installation was detected
 
 
 def main( arguments ):
@@ -734,7 +752,8 @@ def main( arguments ):
 			sys.stdout.write( "Number of proper R2R3-MYBs: " + str( proper_R2R3_MYB_counter ) + "\n" )
 			sys.stdout.flush()
 		
-		#construct a final tree
+		# --- construct a final tree --- #
+		
 		
 
 
