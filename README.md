@@ -27,7 +27,7 @@ Mandatory:
 --subjectdir    STR     Subject dir
 					
 Optional:
---mode          STR     Tool for tree construction (fasttree|raxml)[raxml]
+--mode          STR     Tool for tree construction (fasttree|raxml)[fasttree]
 --refmybs       STR     Reference MYB file
 --cpu           INT     Number of threads [4]
 --cdsinput      STR     Changes expected input to CDS
@@ -53,7 +53,7 @@ Optional:
 
 `--subjectdir` specifies a folder with FASTA files. All files need to contain sequences of the same type (PEP or CDS). Supported file extensions are '.fasta', '.fas', '.fa', '.FASTA', '.FAS', and '.FA'.
 
-`--mode` specifies the tool for the construction of phylogenetic trees. [RAxML](https://doi.org/10.1093/bioinformatics/btz305) ('raxml') or [FastTree2](https://doi.org/10.1371/journal.pone.0009490) ('fasttree') can be specified. Default is 'raxml'.
+`--mode` specifies the tool for the construction of phylogenetic trees. [RAxML](https://doi.org/10.1093/bioinformatics/btz305) ('raxml') or [FastTree2](https://doi.org/10.1371/journal.pone.0009490) ('fasttree') can be specified. Default is 'fasttree'.
 
 `--refmybs` specifies a text file with one MYB ID per line. All IDs listed in this file need to be present in the baits FASTA file and the info file. These IDs can be used for the functional annotation of the newly identified MYBs. This assignment is performed in two ways leading to two different output tables.
 
