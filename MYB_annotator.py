@@ -14,7 +14,7 @@ __usage__ = """
 					--subject <SUBJECT_FILE (peptide,transcript,genomic sequences)> | --subjectdir <SUBJECT_FOLDER_WITH_SEQ_FILES>
 					
 					optional:
-					--mode <TREE_BUILDER>(fasttree|raxml)[raxml]
+					--mode <TREE_BUILDER>(fasttree|raxml)[fasttree]
 					--refmybs <REF_MYB_FILE>
 					--cpu <NUMBER_OF_THREADS>[4]
 					--cdsinput <CHANGES_EXPECTED_INPUT_TO_CDS>
@@ -132,7 +132,7 @@ def alignment_trimming( aln_file, cln_aln_file, occupancy ):
 			out.write( "" )
 
 
-def split_into_ingroup_and_outgroup( tree_file, in_list, out_list, neighbour_cutoff=10 ):
+def split_into_ingroup_and_outgroup( tree_file, in_list, out_list, neighbour_cutoff, mean_factor_cutoff, min_neighbour_cutoff ):
 	"""! @brief split subject sequences into intgroup and outgroup based on reference MYBs and MYB-like sequences """
 
 	# --- preparation of data structure --- #
@@ -143,6 +143,8 @@ def split_into_ingroup_and_outgroup( tree_file, in_list, out_list, neighbour_cut
 	# --- find node objects of reference genes --- #
 	tree = dendropy.Tree.get_from_path( tree_file, "newick" )
 	pdm = dendropy.PhylogeneticDistanceMatrix.from_tree( tree )
+	my_mean_nearest_taxon_distance = pdm.mean_nearest_taxon_distance()
+	
 	ref_node_objects = {}
 	for node in tree.taxon_namespace:
 		try:
@@ -157,28 +159,32 @@ def split_into_ingroup_and_outgroup( tree_file, in_list, out_list, neighbour_cut
 		ref_gene_nodes.append( ref_node_objects[ gene ] )
 		ref_gene_nodes_dict_to_check.update( { ref_node_objects[ gene ]: None } )
 	
-	
 	results = {}
 	for i, t1 in enumerate( tree.taxon_namespace ):
 		try:
 			ref_gene_nodes_dict_to_check[ t1 ]
 		except KeyError:	#only run analysis for non-reference sequences
-			#if len( results.keys() ) % 10 == 0:
-			#	print ( str( len( results.keys() ) ) + "/" + str( len( tree.taxon_namespace )-len( ref_gene_nodes_dict_to_check.keys() ) ) )
-			distances = []
+			path_distances = []
+			patristic_distances = {}
 			for t2 in ref_gene_nodes:	#calculate distance to all other sequences in tree
-				distance = pdm.path_edge_count( t1, t2)
-				distances.append( distance )
+				path_distance = pdm.path_edge_count( t1, t2)
+				patr_distance = pdm.patristic_distance( t1, t2 )
+				path_distances.append( { 'key': t2.label, 'val': path_distance } )
+				patristic_distances.update( { t2.label: patr_distance } )
 			in_counter = 0
 			out_counter = 0
-			sorted_distances = sorted( distances )
-			for val in sorted_distances[ : min( [ len( distances ), neighbour_cutoff ] ) ]:
-				index = distances.index( val )
-				if index < len( in_list ):	#check if smalles distances are to in- or outgroup baits
-					in_counter += 1
-				else:
-					out_counter += 1
-			results.update( { t1.label: float( in_counter ) / ( in_counter + out_counter ) } )
+			sorted_distances = sorted( path_distances, key=itemgetter('val') )
+			for each in sorted_distances[ : min( [ len( path_distances ), neighbour_cutoff ] ) ]:
+				patr = patristic_distances[ each['key'] ]
+				if patr < mean_factor_cutoff*my_mean_nearest_taxon_distance:	#exclude outliers on extremely long branches
+					if each['key'] in in_list:	#check if smalles path_distances are to in- or outgroup baits
+						in_counter += 1
+					else:
+						out_counter += 1
+			if in_counter+out_counter > min_neighbour_cutoff:
+				results.update( { t1.label: { 'score': float( in_counter ) / ( in_counter + out_counter ), 'in': in_counter, 'out': out_counter } } )
+			else:
+				results.update( { t1.label: { 'score': 0.0, 'in': in_counter, 'out': out_counter } } )
 			#score ranges from 0 (non-MYB) to 1 (MYB)
 	return results
 
@@ -556,9 +562,9 @@ def main( arguments ):
 	if '--mode' in arguments:
 		mode = arguments[ arguments.index('--mode')+1 ]
 		if mode not in [ "fasttree", "raxml" ]:
-			mode = "raxml"
+			mode = "fasttree"
 	else:
-		mode = "raxml"
+		mode = "fasttree"
 	
 	if '--blastp' in arguments:
 		blastp = arguments[ arguments.index('--blastp')+1 ]
@@ -602,12 +608,16 @@ def main( arguments ):
 	if '--lencutp' in arguments:
 		length_cutoff_p = int( arguments[ arguments.index('--lencutp')+1 ] )
 	else:
-		length_cutoff_p=50
+		length_cutoff_p=75
 	
 	if '--cdsinput' in arguments:
 		cds_input = True
 	else:
 		cds_input = False
+	
+	neighbour_cutoff=10	#numbers of closest neightbour that is considered in ingroup/outgroup classification
+	mean_factor_cutoff=3	#X*average nearest neighbor distance
+	min_neighbour_cutoff = 0	#minimal number of valid bait sequences (ingroup+outgroup) in range - 1 
 	
 	if output_folder[-1] != "/":
 		output_folder += "/"
@@ -672,7 +682,7 @@ def main( arguments ):
 		
 		aln_file = job_output_folder + "alignment_input.fasta.aln"
 		if not os.path.isfile( aln_file ):
-			p = subprocess.Popen( args= mafft + " " + aln_input_file + " > " + aln_file, shell=True )
+			p = subprocess.Popen( args= mafft + " --quiet " + aln_input_file + " > " + aln_file, shell=True )
 			p.communicate()
 		
 		cln_aln_file = job_output_folder + "alignment_input.fasta.aln.cln"
@@ -688,7 +698,7 @@ def main( arguments ):
 		else:	#FastTree2
 			tree_file = job_output_folder + "FastTree_tree.tre"
 			if not os.path.isfile( tree_file ):
-				p = subprocess.Popen( args= " ".join( [ fasttree, "-wag -nosupport <", cln_aln_file, ">", tree_file ] ), shell=True )
+				p = subprocess.Popen( args= " ".join( [ fasttree, "-wag  -nopr -nosupport <", cln_aln_file, ">", tree_file ] ), shell=True )
 				p.communicate()
 		
 		# --- analyze tree file --- #
@@ -699,7 +709,7 @@ def main( arguments ):
 			sys.stdout.write( "Number of ingroup MYB baits: " + str( len( in_list ) ) + "\n" )
 			sys.stdout.write( "Number of outgroup MYB baits: " + str( len( out_list ) ) + "\n" )
 			sys.stdout.flush()
-			myb_classification = split_into_ingroup_and_outgroup( tree_file, in_list, out_list )
+			myb_classification = split_into_ingroup_and_outgroup( tree_file, in_list, out_list, neighbour_cutoff, mean_factor_cutoff, min_neighbour_cutoff )
 			#dictionary with subject IDs: values are in the range of 0 (no MYB) to 1 (MYB)
 			
 			with open( clean_mybs_file, "w" ) as out:
@@ -707,12 +717,16 @@ def main( arguments ):
 					out2.write( "ID\tScore\n" )
 					candidate_order = list( sorted( myb_classification.keys() ) )
 					for candidate in candidate_order:
-						if myb_classification[ candidate ] > 0.5:
+						if myb_classification[ candidate ]['score'] > 0.5:
 							out.write( '>' + candidate + "\n" + subject_sequences[ candidate ] + "\n" )
-						out2.write( candidate + "\t" + str( myb_classification[ candidate ] ) + "\n" )
+						out2.write( "\t".join( list( map( str, [ 	candidate,
+																						myb_classification[ candidate ]['score'],
+																						myb_classification[ candidate ]['in'],
+																						myb_classification[ candidate ]['out']
+																					] ) ) ) + "\n" )
 		else:
 			myb_classification = load_myb_classification_from_file( tmp_result_table )
-		
+		clean_mybs = load_sequences( clean_mybs_file )
 		
 		# --- find closest reference MYB --- #
 		if len( ref_mybs_file ) > 0:	#only performed if reference MYB file is provided
@@ -720,7 +734,7 @@ def main( arguments ):
 			new_2_ref_myb_mapping_file = result_folder + "3b_new_2_ref_myb_mapping_file.txt"	#produce table sorted by subject sequences
 			if not os.path.isfile( new_2_ref_myb_mapping_file ):
 				ref_mybs = load_ref_mybs( ref_mybs_file )	#load IDs and trivial name from additional text file (dictionary)
-				new2ref_mapping_table, new_per_ref_myb = myb_group_assignment( ref_mybs, tree_file, myb_classification.keys() )
+				new2ref_mapping_table, new_per_ref_myb = myb_group_assignment( ref_mybs, tree_file, clean_mybs.keys() )
 		
 				with open( group_around_ref_myb_file, "w" ) as out:
 					out.write( "RefMYB\tNewMYBs\n" )
