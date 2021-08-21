@@ -1,0 +1,126 @@
+Arabidopsis-thaliana-At3g27920-At2R-MYB000	development of trichome, roothair, floral organ
+Arabidopsis-thaliana-At3g09230-At2R-MYB001	stress tolerance
+Arabidopsis-thaliana-At2g47190-At2R-MYB002	defense, stress response
+Arabidopsis-thaliana-At1g22640-At2R-MYB003	repressor phenylpropanoid, sinapate, lignin
+Arabidopsis-thaliana-At4g38620-At2R-MYB004	repressor phenylpropanoid, sinapate, lignin
+Arabidopsis-thaliana-At3g13540-At2R-MYB005	general flavonoid, trichome
+Arabidopsis-thaliana-At4g09460-At2R-MYB006	repressor phenylpropanoid, sinapate, lignin
+Arabidopsis-thaliana-At2g16720-At2R-MYB007	repressor phenylpropanoid, sinapate, lignin
+Arabidopsis-thaliana-At1g35515-At2R-MYB008	repressor phenylpropanoid, sinapate, lignin
+Arabidopsis-thaliana-At5g16770-At2R-MYB009	suberin
+Arabidopsis-thaliana-At3g12820-At2R-MYB010	phenylpropanoid, lignin
+Arabidopsis-thaliana-At3g62610-At2R-MYB011	flavonol, phlobaphene
+Arabidopsis-thaliana-At2g47460-At2R-MYB012	flavonol, phlobaphene
+Arabidopsis-thaliana-At1g06180-At2R-MYB013	abiotic stress response, flower morphogenesis, stilbene
+Arabidopsis-thaliana-At2g31180-At2R-MYB014	abiotic stress response, flower morphogenesis, stilbene
+Arabidopsis-thaliana-At3g23250-At2R-MYB015	abiotic stress response, flower morphogenesis, stilbene
+Arabidopsis-thaliana-At5g15310-At2R-MYB016	trichome branching, petal morphogenesis
+Arabidopsis-thaliana-At3g61250-At2R-MYB017	flower, meristem identity
+Arabidopsis-thaliana-At4g25560-At2R-MYB018	photomorphogenesis
+Arabidopsis-thaliana-At5g52260-At2R-MYB019	photomorphogenesis
+Arabidopsis-thaliana-At1g66230-At2R-MYB020	SCW, lignin
+Arabidopsis-thaliana-At3g27810-At2R-MYB021	stamen development
+Arabidopsis-thaliana-At5g40430-At2R-MYB022	embryogenesis, seed maturation
+Arabidopsis-thaliana-At5g40330-At2R-MYB023	development of trichome, roothair, floral organ
+Arabidopsis-thaliana-At5g40350-At2R-MYB024	stamen development
+Arabidopsis-thaliana-At2g39880-At2R-MYB025	stress tolerance
+Arabidopsis-thaliana-At3g13890-At2R-MYB026	anther, trichome development
+Arabidopsis-thaliana-At3g53200-At2R-MYB027	phenylpropanoid, lignin
+Arabidopsis-thaliana-At5g61420-At2R-MYB028	glucosinolates, camalexin
+Arabidopsis-thaliana-At5g07690-At2R-MYB029	glucosinolates, camalexin
+Arabidopsis-thaliana-At3g28910-At2R-MYB030	defense, stress response
+Arabidopsis-thaliana-At1g74650-At2R-MYB031	defense, stress response
+Arabidopsis-thaliana-At4g34990-At2R-MYB032	repressor phenylpropanoid, sinapate, lignin
+Arabidopsis-thaliana-At5g06100-At2R-MYB033	anther development, stress response, GAMYB
+Arabidopsis-thaliana-At5g60890-At2R-MYB034	glucosinolates, camalexin
+Arabidopsis-thaliana-At3g28470-At2R-MYB035	anther, tapetum development
+Arabidopsis-thaliana-At5g57620-At2R-MYB036	axillary meristem, root growth
+Arabidopsis-thaliana-At5g23000-At2R-MYB037	axillary meristem, root growth
+Arabidopsis-thaliana-At2g36890-At2R-MYB038	axillary meristem, root growth
+Arabidopsis-thaliana-At4g17780-At2R-MYB039	suberin
+Arabidopsis-thaliana-At5g14340-At2R-MYB040	stamen/anther development, phenylpropanoid, SCW
+Arabidopsis-thaliana-At4g28110-At2R-MYB041	defense, stress response
+Arabidopsis-thaliana-At4g12350-At2R-MYB042	SCW, lignin
+Arabidopsis-thaliana-At5g16600-At2R-MYB043	SCW, lignin
+Arabidopsis-thaliana-At5g67300-At2R-MYB044	stress response, hormone signaling
+Arabidopsis-thaliana-At3g48920-At2R-MYB045	photomorphogenesis
+Arabidopsis-thaliana-At5g12870-At2R-MYB046	SCW, lignin
+Arabidopsis-thaliana-At1g18710-At2R-MYB047	defense, stress response
+Arabidopsis-thaliana-At3g46130-At2R-MYB048	cell cycle regulation
+Arabidopsis-thaliana-At5g54230-At2R-MYB049	defense, stress response
+Arabidopsis-thaliana-At1g57560-At2R-MYB050	mucillage, lignin, stomatal closure
+Arabidopsis-thaliana-At1g18570-At2R-MYB051	glucosinolates, camalexin
+Arabidopsis-thaliana-At1g17950-At2R-MYB052	cell wall, lignin, seed oil, axillary meristem
+Arabidopsis-thaliana-At5g65230-At2R-MYB053	root development
+Arabidopsis-thaliana-At1g73410-At2R-MYB054	cell wall, lignin, seed oil, axillary meristem
+Arabidopsis-thaliana-At4g01680-At2R-MYB055	mucillage, lignin, stomatal closure
+Arabidopsis-thaliana-At5g17800-At2R-MYB056	cell wall, lignin, seed oil, axillary meristem
+Arabidopsis-thaliana-At3g01530-At2R-MYB057	stamen development
+Arabidopsis-thaliana-At1g16490-At2R-MYB058	phenylpropanoid, lignin
+Arabidopsis-thaliana-At5g59780-At2R-MYB059	cell cycle regulation
+Arabidopsis-thaliana-At1g08810-At2R-MYB060	defense, stress response
+Arabidopsis-thaliana-At1g09540-At2R-MYB061	mucillage, lignin, stomatal closure
+Arabidopsis-thaliana-At1g68320-At2R-MYB062	defense, stress response
+Arabidopsis-thaliana-At1g79180-At2R-MYB063	phenylpropanoid, lignin
+Arabidopsis-thaliana-At5g11050-At2R-MYB064	embryogenesis, seed maturation
+Arabidopsis-thaliana-At3g11440-At2R-MYB065	anther development, stress response, GAMYB
+Arabidopsis-thaliana-At5g14750-At2R-MYB066	development of trichome, roothair, floral organ
+Arabidopsis-thaliana-At3g12720-At2R-MYB067	anther, trichome development
+Arabidopsis-thaliana-At5g65790-At2R-MYB068	axillary meristem, root growth
+Arabidopsis-thaliana-At4g33450-At2R-MYB069	cell wall, lignin, seed oil, axillary meristem
+Arabidopsis-thaliana-At2g23290-At2R-MYB070	stress response, hormone signaling
+Arabidopsis-thaliana-At3g24310-At2R-MYB071	phenylpropanoid, lignin
+Arabidopsis-thaliana-At1g56160-At2R-MYB072	phenylpropanoid, lignin
+Arabidopsis-thaliana-At4g37260-At2R-MYB073	stress response, hormone signaling
+Arabidopsis-thaliana-At4g05100-At2R-MYB074	defense, stress response
+Arabidopsis-thaliana-At1g56650-At2R-MYB075	anthocyanins (betalains)
+Arabidopsis-thaliana-At5g07700-At2R-MYB076	glucosinolates, camalexin
+Arabidopsis-thaliana-At3g50060-At2R-MYB077	stress response, hormone signaling
+Arabidopsis-thaliana-At5g49620-At2R-MYB078	defense, stress response
+Arabidopsis-thaliana-At4g13480-At2R-MYB079	phenylpropanoid, lignin
+Arabidopsis-thaliana-At5g56110-At2R-MYB080	anther, tapetum development
+Arabidopsis-thaliana-At2g26960-At2R-MYB081	anther development, stress response
+Arabidopsis-thaliana-At5g52600-At2R-MYB082	development of trichome, roothair, floral organ
+Arabidopsis-thaliana-At3g08500-At2R-MYB083	SCW, lignin
+Arabidopsis-thaliana-At3g49690-At2R-MYB084	axillary meristem, root growth
+Arabidopsis-thaliana-At4g22680-At2R-MYB085	SCW, lignin
+Arabidopsis-thaliana-At5g26660-At2R-MYB086	mucillage, lignin, stomatal closure
+Arabidopsis-thaliana-At4g37780-At2R-MYB087	axillary meristem, root growth
+Arabidopsis-thaliana-At2g02820-At2R-MYB088	guard cell division, root gravitropism
+Arabidopsis-thaliana-At5g39700-At2R-MYB089	cell wall, lignin, seed oil, axillary meristem
+Arabidopsis-thaliana-At1g66390-At2R-MYB090	anthocyanins (betalains)
+Arabidopsis-thaliana-At2g37630-At2R-MYB091	leaf, shoot, germ morphogenesis
+Arabidopsis-thaliana-At5g10280-At2R-MYB092	root development
+Arabidopsis-thaliana-At1g34670-At2R-MYB093	root development
+Arabidopsis-thaliana-At3g47600-At2R-MYB094	defense, stress response
+Arabidopsis-thaliana-At1g74430-At2R-MYB095	defense, stress response
+Arabidopsis-thaliana-At5g62470-At2R-MYB096	defense, stress response
+Arabidopsis-thaliana-At4g26930-At2R-MYB097	anther development, stress response
+Arabidopsis-thaliana-At4g18770-At2R-MYB098	embryogenesis, seed maturation
+Arabidopsis-thaliana-At5g62320-At2R-MYB099	stamen/anther development, phenylpropanoid, SCW
+Arabidopsis-thaliana-At2g25230-At2R-MYB100	embryogenesis, seed maturation
+Arabidopsis-thaliana-At2g32460-At2R-MYB101	anther development, stress response
+Arabidopsis-thaliana-At4g21440-At2R-MYB102	defense, stress response
+Arabidopsis-thaliana-At1g63910-At2R-MYB103	anther, trichome development
+Arabidopsis-thaliana-At2g26950-At2R-MYB104	anther development, stress response
+Arabidopsis-thaliana-At1g69560-At2R-MYB105	cell wall, lignin, seed oil, axillary meristem
+Arabidopsis-thaliana-At3g01140-At2R-MYB106	trichome branching, petal morphogenesis
+Arabidopsis-thaliana-At3g02940-At2R-MYB107	suberin
+Arabidopsis-thaliana-At3g06490-At2R-MYB108	defense, stress response
+Arabidopsis-thaliana-At3g55730-At2R-MYB109	stress tolerance
+Arabidopsis-thaliana-At3g29020-At2R-MYB110	cell wall, lignin, seed oil, axillary meristem
+Arabidopsis-thaliana-At5g49330-At2R-MYB111	flavonol, phlobaphene
+Arabidopsis-thaliana-At1g48000-At2R-MYB112	defense, stress response
+Arabidopsis-thaliana-At1g66370-At2R-MYB113	anthocyanins (betalains)
+Arabidopsis-thaliana-At1g66380-At2R-MYB114	anthocyanins (betalains)
+Arabidopsis-thaliana-At5g40360-At2R-MYB115	embryogenesis, seed maturation
+Arabidopsis-thaliana-At1g25340-At2R-MYB116	defense, stress response
+Arabidopsis-thaliana-At1g26780-At2R-MYB117	cell wall, lignin, seed oil, axillary meristem
+Arabidopsis-thaliana-At3g27780-At2R-MYB118	embryogenesis, seed maturation
+Arabidopsis-thaliana-At5g58850-At2R-MYB119	embryogenesis, seed maturation
+Arabidopsis-thaliana-At5g55020-At2R-MYB120	anther development, stress response
+Arabidopsis-thaliana-At3g30210-At2R-MYB121	phenylpropanoid, lignin
+Arabidopsis-thaliana-At1g74080-At2R-MYB122	glucosinolates, camalexin
+Arabidopsis-thaliana-At5g35550-At2R-MYB123	proanthocyanidins
+Arabidopsis-thaliana-At1g14350-At2R-MYB124	guard cell division, root gravitropism
+Arabidopsis-thaliana-At3g60460-At2R-MYB125	leaf, shoot, germ morphogenesis
