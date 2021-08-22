@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.11"
+__version__ = "v0.14"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -16,6 +16,10 @@ __usage__ = """
 					optional:
 					--mode <TREE_BUILDER>(fasttree|raxml)[fasttree]
 					--refmybs <REF_MYB_FILE>
+					--ath <ATH_MYB_FILE_FOR_FINAL_TREE>
+					--name <STRING_USED_AS_PREFIX_IN_FILENAMES>
+					--collapse <REDUCES IN-PARALOGS_TO_ONE_REPRESENTATIVE>
+					--motifs <MOTIFS_TO_CHECK_FILE>
 					--cpu <NUMBER_OF_THREADS>[4]
 					--cdsinput <CHANGES_EXPECTED_INPUT_TO_CDS>
 					
@@ -309,9 +313,15 @@ def load_ref_mybs( ref_mybs_file ):
 		line = f.readline()
 		while line:
 			if "\t" in line:
-				parts = line.strip().split()
+				parts = line.strip().split("\t")
+				if len( parts ) == 2:
+					refmybs.update( { parts[0]: { 'id': parts[0], 'name': parts[1], 'function': "n/a", 'group': "" } } )
+				elif len( parts ) == 3:
+					refmybs.update( { parts[0]: { 'id': parts[0], 'name': parts[1], 'function': parts[2], 'group': "" } } )
+				elif len( parts ) == 4:
+					refmybs.update( { parts[0]: { 'id': parts[0], 'name': parts[1], 'function': parts[2], 'group': parts[3] } } )
 			else:
-				refmybs.update( { line.strip(): line.strip() } )
+				refmybs.update( { line.strip(): { 'id': parts[0], 'name': line.strip(), 'function': "n/a" } } )
 			line = f.readline()
 	return refmybs
 
@@ -335,6 +345,8 @@ def myb_group_assignment( ref_mybs, tree_file, myb_candidates ):
 	# --- find node objects of reference genes --- #
 	tree = dendropy.Tree.get_from_path( tree_file, "newick" )
 	pdm = dendropy.PhylogeneticDistanceMatrix.from_tree( tree )
+	my_mean_nearest_taxon_distance = pdm.mean_nearest_taxon_distance()
+	
 	ref_node_objects = {}
 	new_node_objects = {}
 	for node in tree.taxon_namespace:
@@ -360,13 +372,13 @@ def myb_group_assignment( ref_mybs, tree_file, myb_candidates ):
 		canidate_gene_nodes_dict_to_check.update( { new_node_objects[ gene ]: None } )
 	
 	for i, t1 in enumerate( candidate_gene_nodes ):
-		#print ( "ref matching - " + str( i+1 ) + "/" + str( len( candidate_gene_nodes ) ) )
-		distances = []
+		edge_distances = []
+		patr_distances = []
 		for t2 in ref_gene_nodes:	#calculate distance to all other sequences in tree
-			distance = pdm.path_edge_count( t1, t2)
-			distances.append( distance )
-		ref_myb = my_ref_mybs[ distances.index( min( distances ) ) ]
-		new2ref_mapping_table[ t1.label ] = ref_myb
+			edge_distances.append( pdm.path_edge_count( t1, t2) )
+			patr_distances.append( pdm.patristic_distance( t1, t2 ) )
+		ref_myb = my_ref_mybs[ edge_distances.index( min( edge_distances ) ) ]
+		new2ref_mapping_table[ t1.label ] = { 'label': ref_myb, 'edges': min( edge_distances ), 'patr': patr_distances[ edge_distances.index( min( edge_distances ) ) ] }
 		new_per_ref_myb[ ref_myb ].append( t1.label )
 
 	return new2ref_mapping_table, new_per_ref_myb
@@ -381,23 +393,39 @@ def load_myb_classification_from_file( tmp_result_table ):
 		line = f.readline()
 		while line:
 			parts = line.strip().split('\t')
-			myb_classification.update( { parts[0]: float( parts[1] ) } )
+			myb_classification.update( { parts[1]: float( parts[2] ) } )
 			line = f.readline()
 	return myb_classification
 
 
-def R2R3_comain_check( seqs ):
+def MYB_comain_check( seqs ):
 	"""! @brief screen sequences for R2R3-MYB domain """
 	
-	R2R3_domain = {}
+	domain_status = {}
+	R1 = "\w{3,4}W\w{17,21}W\w{17,21}W\w{5,8}"
+	R2 = "\w{5}[WF]{1}\w{18,21}W\w{15,27}[WY]{1}\w{4}"	#F at pos1 and Y at pos3 are very rare
+	R3 = "\w{5}[WLIMF]{1}\w{14,21}W\w{17,21}[WYF]{1}\w{4}"	#diversity at pos1 is high, but po2 and pos3 are conserved
+	#MYB domain patterns based on Feng et al., 2017 (doi: 10.1093/gbe/evx056) and Du et al., 2015 (doi: 10.1038/srep11037)
+	#banana MYB paper pattern: "\w{5}W\w{85,100}W\w{7}"
 	for key in sorted( seqs.keys() ):
 		seq = seqs[ key ]
+		# --- check for more than 3 MYB repeats --- #
+		
+		# --- 3R MYBs (R1+R2+R3) --- #
 		try:
-			match = re.findall( "\w{5}W\w{85,100}W\w{7}", seq )[0]
-			R2R3_domain.update( { key: match } )
+			match = re.findall( R1 + "\w{0,3}" + R2 + "\w{0,3}" + R3, seq )[0]	#R1R2R3 domains present
+			domain_status.update( { key: { 'domain': "3R", 'seq': match } } )
 		except:
-			R2R3_domain.update( { key: "" } )
-	return R2R3_domain
+			try:
+				match = re.findall( R2 + "\w{0,3}" + R3, seq )[0]	#R2R3 domains present
+				domain_status.update( { key: { 'domain': "R2R3", 'seq': match } } )
+			except:
+				try:
+					match = re.findall( R1, seq )[0]	#R1 domain present
+					domain_status.update( { key: { 'domain': "R1", 'seq': match } } )
+				except:
+					domain_status.update( { key: { 'domain': "pseudo", 'seq': seq } } )	#no MYB domain detected
+	return domain_status
 
 
 def check_MYB_IDs_across_files( bait_seq_file, info_file, ref_mybs_file ):
@@ -459,6 +487,8 @@ def check_MYB_IDs_across_files( bait_seq_file, info_file, ref_mybs_file ):
 			line = f.readline()
 			while line:
 				x = line.strip()
+				if "\t" in x:
+					x = line.split('\t')[0]
 				try:
 					seqs[ x ]
 				except KeyError:
@@ -541,6 +571,233 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 			out.write ( "RAxML version detection failed.\n" )	#if no RAxML installation was detected
 
 
+def load_subject_name_mapping_table( mapping_table_file ):
+	"""! @brief load subject name mapping table """
+	
+	mapping_table = {}
+	with open( mapping_table_file, "r" ) as f:
+		line = f.readline()
+		while line:
+			parts = line.strip().split('\t')
+			mapping_table.update( { parts[1]: parts[0] } )	#clean ID back to original one
+			line = f.readline()
+	return mapping_table
+
+
+def load_motifs_from_file( motifs_file ):
+	"""! @brief load motifs from file """
+	
+	motifs = {}
+	with open( motifs_file, "r" ) as f:
+		line = f.readline()
+		while line:
+			if "\t" in line:
+				parts = line.strip().split()
+				motifs.update( { parts[0]: parts[1] } )
+			else:
+				motifs.update( { "motif-" + str( len( motifs.keys() ).zfill(3) +1 ): line.strip() } )
+			line = f.readline()
+	return motifs
+
+
+def motif_check( seqs, motifs ):
+	"""! @brief screen sequences for motifs """
+	
+	results = {}
+	for key in sorted( seqs.keys() ):
+		results.update( { key: {} } )
+		seq = seqs[ key ]
+		for ID in motifs.keys():
+			try:
+				match = re.findall( motifs[ ID ], seq )[0]
+				results[ key ].update( { key: match } )
+			except:
+				results[ key ].update( { key: "" } )
+	return results
+
+
+def establish_paralog_groups( tree_file, myb_candidates ):
+	"""! @brief construct paralog groups """
+	
+	candidate_mapping_table = {}
+	for gene in myb_candidates:	#candidate genes of new species
+		candidate_mapping_table.update( { gene: None } )
+	
+	# --- find node objects of reference genes --- #
+	tree = dendropy.Tree.get_from_path( tree_file, "newick" )
+	pdm = dendropy.PhylogeneticDistanceMatrix.from_tree( tree )
+	my_mean_nearest_taxon_distance = pdm.mean_nearest_taxon_distance()
+	
+	new_node_objects = {}	#get new MYB candidate node objects
+	for node in tree.taxon_namespace:
+		try:
+			candidate_mapping_table[ node.label ]
+			new_node_objects.update( { node.label: node } )
+		except KeyError:
+			pass
+	
+	candidate_gene_nodes = []
+	canidate_gene_nodes_dict_to_check = {}
+	for gene in myb_candidates:
+		candidate_gene_nodes.append( new_node_objects[ gene ] )
+		canidate_gene_nodes_dict_to_check.update( { new_node_objects[ gene ]: None } )
+	
+	black_list = {}
+	paralog_collection = []
+	for i, t1 in enumerate( candidate_gene_nodes ):
+		try:
+			black_list[ t1.label ]
+		except KeyError:
+			paralogs = [ t1.label ]
+			edge_distances = []
+			patr_distances = {}
+			for t2 in tree.taxon_namespace:	#calculate distance to all other sequences in tree
+				try:
+					black_list[ t2.label ]
+				except KeyError:
+					if t1.label != t2.label:
+						edge_distances.append( { 'id': t2.label, 'dist': pdm.path_edge_count( t1, t2) } )
+						patr_distances.update( { t2.label: pdm.patristic_distance( t1, t2 ) } )
+			for each in list( sorted( edge_distances, key=itemgetter('dist') ) ):
+				try:
+					candidate_mapping_table[ each['id'] ]
+					if patr_distances[ each['id'] ] < my_mean_nearest_taxon_distance:
+						paralogs.append( each['id'] )
+						black_list.update( { each['id']: None } )
+				except KeyError:
+					break	#next neighbour is not a new candidate MYB => break extension of paralog group
+			paralog_collection.append( paralogs )
+			black_list.update( { t1.label: None } )
+
+	return paralog_collection
+
+
+def get_represenative_paralog_per_group( paralog_groups, clean_mybs, repr_clean_myb_file ):
+	"""! @brief select longest sequence as representative per paralog group """
+	
+	paralog_representatives = {}
+	with open( repr_clean_myb_file, "w" ) as out:
+		for group in paralog_groups:
+			if len( group ) == 1:
+				out.write( '>' + group[0] + "\n" + clean_mybs[ group[0] ] + "\n" )
+				paralog_representatives.update( { group[0]:  clean_mybs[ group[0] ] } )
+			else:
+				seqs_len_sorting = []
+				for each in group:
+					seqs_len_sorting.append( { 'id': each, 'len': len( clean_mybs[ each ] ), 'seq': clean_mybs[ each ] } )
+				representative = list( sorted( seqs_len_sorting, key=itemgetter('len', 'id') ) )[-1]
+				out.write( '>' + representative['id'] + "\n" + representative['seq'] + "\n" )
+				paralog_representatives.update( { representative['id']:  representative['seq'] } )
+	return paralog_representatives
+
+
+def MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, subject_name_mapping_table ):
+	"""! @brief check sequences for MYB domains """
+	
+	clean_candidate_myb_sequences = load_sequences( clean_mybs_file )
+	myb_domains = MYB_comain_check( clean_candidate_myb_sequences )	#based on banana MYB paper: https://doi.org/10.1371/journal.pone.0239275
+	R1_MYB_counter = 0
+	R2R3_MYB_counter = 0
+	R1R2R3_MYB_counter = 0
+	pseudo_MYB_counter = 0
+	with open( myb_domain_check_file, "w" ) as out:
+		out.write( "OriginalGeneID\tCleanGeneID\tR2R3-MYB domain status\tR2R3-MYB domain\n" )
+		candidates = list( sorted( clean_candidate_myb_sequences.keys() ) )
+		for candidate in candidates:
+			dom = myb_domains[ candidate ]['domain']
+			out.write( "\t".join( [ subject_name_mapping_table[ candidate ], candidate, dom, myb_domains[ candidate ]['seq'] ] ) + "\n" )
+			if dom == "R1":
+				R1_MYB_counter += 1
+			elif dom == "R2R3":
+				R2R3_MYB_counter += 1
+			elif dom == "3R":
+				R1R2R3_MYB_counter += 1
+			elif dom == "pseudo":
+				pseudo_MYB_counter += 1
+	sys.stdout.write( "Number of 1R-MYBs: " + str( R1_MYB_counter ) + "\n" )
+	sys.stdout.write( "Number of R2R3-MYBs: " + str( R2R3_MYB_counter ) + "\n" )
+	sys.stdout.write( "Number of 3R-MYBs: " + str( R1R2R3_MYB_counter ) + "\n" )
+	sys.stdout.write( "Number of pseudo MYBs and unclassified ones: " + str( pseudo_MYB_counter ) + "\n" )
+	sys.stdout.flush()
+
+
+def tree_constructor( X_aln_input_file, X_aln_file, X_cln_aln_file, X_bait_seq_file, X_mybs_file, mode, X_output_folder, Xname, Xnumber, mafft, raxml, fasttree ):
+	"""! @brief handles the construction of alignments and phylogenetic tree
+			@note second FASTA file can be an empty string to run this function just based on one FASTA file
+	"""
+	
+	if not os.path.isfile( X_aln_input_file ):
+		if len( X_mybs_file ) > 0:
+			p = subprocess.Popen( args= "cat " + X_bait_seq_file + " " + X_mybs_file + " > " + X_aln_input_file, shell=True )
+			p.communicate()
+		else:
+			p = subprocess.Popen( args= "cp " + X_bait_seq_file + " " + X_aln_input_file, shell=True )
+			p.communicate()
+	
+	if not os.path.isfile( X_aln_file ):
+		p = subprocess.Popen( args= mafft + " --quiet " + X_aln_input_file + " > " + X_aln_file, shell=True )
+		p.communicate()
+	
+	if not os.path.isfile( X_cln_aln_file ):
+		alignment_trimming( X_aln_file, X_cln_aln_file, occupancy=0.1 )
+	
+	if mode == "raxml":	#RAxML
+		prefix = X_output_folder + Xname + Xnumber + "RAxML_tree"
+		tree_file = prefix + ".raxml.bestTree"
+		if not os.path.isfile( tree_file ):
+			p = subprocess.Popen( args= " ".join( [ raxml, "--all --threads " + str( cpu ) + " --model LG+G8+F --msa", X_cln_aln_file, "--prefix", prefix ] ), shell=True )
+			p.communicate()
+	else:	#FastTree2
+		tree_file = X_output_folder  + Xname + Xnumber + "FastTree_tree.tre"
+		if not os.path.isfile( tree_file ):
+			p = subprocess.Popen( args= " ".join( [ fasttree, "-wag  -nopr -nosupport <", X_cln_aln_file, ">", tree_file ] ), shell=True )
+			p.communicate()
+	return tree_file
+
+
+def construct_fasta_file_w_repr_and_ath_MYBs( ref_mybs, new2ref_mapping_table, repr_and_ath_mybs_for_tree, repr_and_ath_mybs_fasta_file ):
+	"""! @brief rename sequences with group for final tree construction """
+	
+	myb2group = {}
+	myb_id2name = {}
+	myb_name2id = {}
+	for each in list( ref_mybs.values() ):
+		myb2group.update( { each['id']: each['group'] } )
+		myb_id2name.update( { each['id']: each['name'] } )
+		myb_name2id.update( { each['name']: each['id'] } )
+	
+	with open( repr_and_ath_mybs_fasta_file, "w" ) as out:
+		for key in list( repr_and_ath_mybs_for_tree.keys() ):
+			try:
+				group = myb2group[ key ]
+			except KeyError:
+				try:
+					group = myb2group[ new2ref_mapping_table[ key ] ]
+				except KeyError:
+					try:
+						group = myb2group[ myb_name2id[ new2ref_mapping_table[ key ] ] ]
+					except KeyError:
+						group = ""
+			try:
+				out.write( '>' + myb_id2name[ key ] + "-" + group + "\n" + repr_and_ath_mybs_for_tree[ key ] + "\n" )
+			except KeyError:
+				out.write( '>' + key + "-" + group + "\n" + repr_and_ath_mybs_for_tree[ key ] + "\n" )
+
+
+def load_candidate_myb_to_myb_mapping_table( new_2_ref_myb_mapping_file ):
+	"""! @brief load mapping table """
+	
+	new2ref_mapping_table = {}
+	with open( new_2_ref_myb_mapping_file, "r" ) as f:
+		f.readline()	#remove header
+		line = f.readline()
+		while line:
+			parts = line.strip().split('\t')
+			new2ref_mapping_table.update( { parts[0]: parts[1] } )
+			line = f.readline()
+	return new2ref_mapping_table
+
+
 def main( arguments ):
 	"""! @brief run everything """
 	
@@ -565,6 +822,21 @@ def main( arguments ):
 			mode = "fasttree"
 	else:
 		mode = "fasttree"
+	
+	if '--collapse' in arguments:
+		collapse_mode = True
+	else:
+		collapse_mode = False
+	
+	if '--ath' in arguments:
+		ath_myb_file = arguments[ arguments.index('--ath')+1 ]
+	else:
+		ath_myb_file = ""
+	
+	if "--name" in arguments:
+		name = arguments[ arguments.index('--name')+1 ]
+	else:
+		name = ""
 	
 	if '--blastp' in arguments:
 		blastp = arguments[ arguments.index('--blastp')+1 ]
@@ -595,6 +867,11 @@ def main( arguments ):
 		ref_mybs_file = arguments[ arguments.index('--refmybs')+1 ]
 	else:
 		ref_mybs_file = ""
+	
+	if '--motifs' in arguments:
+		motifs_file = arguments[ arguments.index('--motifs')+1 ]
+	else:
+		motifs_file = ""
 	
 	# --- BLAST hit cutoffs --- #
 	if "--simcutp" in arguments:
@@ -638,18 +915,20 @@ def main( arguments ):
 		# --- validation of inputs --- #
 		#check if all MYB baits are listed in the info file
 		subject_file = job_output_folder + "clean_subject_sequences.fasta"
-		mapping_table = job_output_folder + "raw_subject_to_clean_subject_mapping_table.txt"
+		mapping_table_file = job_output_folder + "raw_subject_to_clean_subject_mapping_table.txt"
 		if not os.path.isfile( subject_file ):
-			clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_input )	#remove illegal characters from subject sequence headers
+			clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table_file, cds_input )	#remove illegal characters from subject sequence headers
 		MYB_check_status = check_MYB_IDs_across_files( bait_seq_file, info_file, ref_mybs_file )
 		if not MYB_check_status:
 			sys.exit( "ERROR: analysis is stopped due to inconstistency of MYB IDs between files" )
+		subject_name_mapping_table = load_subject_name_mapping_table( mapping_table_file )
+		
 		
 		result_folder = job_output_folder + "RESULTS/"
 		if not os.path.exists( result_folder ):
 			os.makedirs( result_folder )
 		
-		doc_file = result_folder + "0_documentation.txt"
+		doc_file = result_folder + name + "00_documentation.txt"
 		generate_documentation_file( 	doc_file, bait_seq_file, info_file, job_output_folder, raw_subject_file,
 															mode, blastp, makeblastdb, mafft, cpu, raxml, fasttree, ref_mybs_file,
 															similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input
@@ -669,41 +948,21 @@ def main( arguments ):
 		blast_results = load_BLAST_results( blast_result_file, similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p )	#load valid BLASTp results
 		
 		subject_sequences = load_sequences( subject_file )
-		candidate_file = result_folder + "1_initial_candidates.fasta"
+		candidate_file = result_folder + name + "01_initial_candidates.fasta"
 		with open( candidate_file, "w" ) as out:
 			for each in blast_results.keys():
 				out.write( '>' + each + "\n" + subject_sequences[ each ] + "\n" )
 		
 		# --- construct phylogenetic tree --- #
 		aln_input_file = job_output_folder + "alignment_input.fasta"
-		if not os.path.isfile( aln_input_file ):
-			p = subprocess.Popen( args= "cat " + bait_seq_file + " " + candidate_file + " > " + aln_input_file, shell=True )
-			p.communicate()
-		
 		aln_file = job_output_folder + "alignment_input.fasta.aln"
-		if not os.path.isfile( aln_file ):
-			p = subprocess.Popen( args= mafft + " --quiet " + aln_input_file + " > " + aln_file, shell=True )
-			p.communicate()
-		
 		cln_aln_file = job_output_folder + "alignment_input.fasta.aln.cln"
-		if not os.path.isfile( cln_aln_file ):
-			alignment_trimming( aln_file, cln_aln_file, occupancy=0.1 )
+		tree_file = tree_constructor( aln_input_file, aln_file, cln_aln_file, bait_seq_file, candidate_file, mode, job_output_folder, "", "", mafft, raxml, fasttree )
 		
-		if mode == "raxml":	#RAxML
-			prefix = job_output_folder + "RAxML_tree"
-			tree_file = prefix + ".raxml.bestTree"
-			if not os.path.isfile( tree_file ):
-				p = subprocess.Popen( args= " ".join( [ raxml, "--all --threads " + str( cpu ) + " --model LG+G8+F --msa", cln_aln_file, "--prefix", prefix ] ), shell=True )
-				p.communicate()
-		else:	#FastTree2
-			tree_file = job_output_folder + "FastTree_tree.tre"
-			if not os.path.isfile( tree_file ):
-				p = subprocess.Popen( args= " ".join( [ fasttree, "-wag  -nopr -nosupport <", cln_aln_file, ">", tree_file ] ), shell=True )
-				p.communicate()
 		
 		# --- analyze tree file --- #
-		clean_mybs_file = result_folder + "2a_clean_MYBs.fasta"
-		tmp_result_table = result_folder + "2b_in_out_MYB_analysis_results.txt"
+		clean_mybs_file = result_folder + name + "02a_clean_MYBs.fasta"
+		tmp_result_table = result_folder + name + "02b_in_out_MYB_analysis_results.txt"
 		if not os.path.isfile( tmp_result_table ):
 			in_list, out_list = load_bait_MYB_anno( info_file )
 			sys.stdout.write( "Number of ingroup MYB baits: " + str( len( in_list ) ) + "\n" )
@@ -714,12 +973,13 @@ def main( arguments ):
 			
 			with open( clean_mybs_file, "w" ) as out:
 				with open( tmp_result_table, "w" ) as out2:
-					out2.write( "ID\tScore\n" )
+					out2.write( "OriginalID\tCleanID\tScore\tIngroupMatches\tOutgroupMatches\n" )
 					candidate_order = list( sorted( myb_classification.keys() ) )
 					for candidate in candidate_order:
 						if myb_classification[ candidate ]['score'] > 0.5:
 							out.write( '>' + candidate + "\n" + subject_sequences[ candidate ] + "\n" )
-						out2.write( "\t".join( list( map( str, [ 	candidate,
+						out2.write( "\t".join( list( map( str, [ 	subject_name_mapping_table[ candidate ],
+																						candidate,
 																						myb_classification[ candidate ]['score'],
 																						myb_classification[ candidate ]['in'],
 																						myb_classification[ candidate ]['out']
@@ -730,43 +990,111 @@ def main( arguments ):
 		
 		# --- find closest reference MYB --- #
 		if len( ref_mybs_file ) > 0:	#only performed if reference MYB file is provided
-			group_around_ref_myb_file = result_folder + "3a_group_around_ref_MYBs.txt"	#produce table sorted by reference MYBs
-			new_2_ref_myb_mapping_file = result_folder + "3b_new_2_ref_myb_mapping_file.txt"	#produce table sorted by subject sequences
+			group_around_ref_myb_file = result_folder + name + "03a_group_around_ref_MYBs.txt"	#produce table sorted by reference MYBs
+			new_2_ref_myb_mapping_file = result_folder + name + "03b_new_2_ref_myb_mapping_file.txt"	#produce table sorted by subject sequences
 			if not os.path.isfile( new_2_ref_myb_mapping_file ):
 				ref_mybs = load_ref_mybs( ref_mybs_file )	#load IDs and trivial name from additional text file (dictionary)
 				new2ref_mapping_table, new_per_ref_myb = myb_group_assignment( ref_mybs, tree_file, clean_mybs.keys() )
 		
 				with open( group_around_ref_myb_file, "w" ) as out:
-					out.write( "RefMYB\tNewMYBs\n" )
+					out.write( "RefMYB\tFunction\tNewMYBs\n" )
 					gene_order = list( sorted( new_per_ref_myb.keys() ) )
 					for gene in gene_order:
-						out.write( gene + "\t" + ";".join( new_per_ref_myb[ gene ] ) + "\n" )		
+						original_gene_names = []
+						for x in new_per_ref_myb[ gene ]:
+							original_gene_names.append( subject_name_mapping_table[ x ] )
+						out.write( ref_mybs[ gene ]['name'] + "\t" + ref_mybs[ gene ]['function'] + "\t" + ";".join( original_gene_names )  + "\n" )		
 				
 				with open( new_2_ref_myb_mapping_file, "w" ) as out:
-					out.write( "NewMYB\tRefMYBs\n" )
+					out.write( "NewMYB\tRefMYB\tEdgeDistance\tPatristicDistance\tAnnotation\n" )
 					gene_order = list( sorted( new2ref_mapping_table.keys() ) )
 					for gene in gene_order:
-						out.write( gene + "\t" + new2ref_mapping_table[ gene ] + "\n" )
+						out.write( "\t".join( list( map( str, [ 	gene,
+																					ref_mybs[ new2ref_mapping_table[ gene ]['label'] ]['name'],	#map back to MYB name
+																					new2ref_mapping_table[ gene ]['edges'],
+																					new2ref_mapping_table[ gene ]['patr'],
+																					ref_mybs[ new2ref_mapping_table[ gene ]['label'] ]['function']	#map back to MYB name
+																				] ) ) ) + "\n" )	#label, edges, patr
 		
-		# --- check for presence of R2R3 MYB domain --- #
-		myb_domain_check_file = result_folder + "4_R2R3_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
+		# --- check for presence of MYB domains --- #
+		myb_domain_check_file = result_folder + name + "04a_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
 		if not os.path.isfile( myb_domain_check_file ):
-			clean_candidate_myb_sequences = load_sequences( clean_mybs_file )
-			r2r3_domains = R2R3_comain_check( clean_candidate_myb_sequences )	#based on banana MYB paper: https://doi.org/10.1371/journal.pone.0239275
-			proper_R2R3_MYB_counter = 0
-			with open( myb_domain_check_file, "w" ) as out:
-				out.write( "GeneID\tR2R3-MYB domain status\tR2R3-MYB domain\n" )
-				candidates = list( sorted( clean_candidate_myb_sequences.keys() ) )
-				for candidate in candidates:
-					if len( r2r3_domains[ candidate ] ) > 0:
-						out.write( "\t".join( [ candidate, "1", r2r3_domains[ candidate ] ] ) + "\n" )
-						proper_R2R3_MYB_counter += 1
-					else:
-						out.write( "\t".join( [ candidate, "0", "" ] ) + "\n" )
-			sys.stdout.write( "Number of proper R2R3-MYBs: " + str( proper_R2R3_MYB_counter ) + "\n" )
-			sys.stdout.flush()
+			MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, subject_name_mapping_table )
+		
+		
+		# --- check for different motifs --- #
+		motif_check_file_summary = result_folder + name + "04b_motif_check.txt"	#produce table with motif (0/1)
+		motif_check_file_seqs = result_folder + name + "04b_motif_check.txt"	#produce table with motif sequences
+		if len( motifs_file ) > 0:
+			motifs = load_motifs_from_file( motifs_file )
+			motif_check_results = motif_check( seqs, motifs )	#prim key = seqID, secondary key = motifs
+			motif_names = list( sorted( list( motifs.keys() ) ) )
+			with open( motif_check_file_summary, "w" ) as out1:
+				with open( motif_check_file_seqs, "w" ) as out2:
+					candidates = list( sorted( clean_candidate_myb_sequences.keys() ) )
+					for candidate in candidates:
+						new_line_details = [ subject_name_mapping_table[ candidate ] ]
+						new_line_summary = [ subject_name_mapping_table[ candidate ] ]
+						for mot in motif_names:
+							new_line_details.append( motif_check_results[ candidate ][ mot ] )
+							if len( motif_check_results[ candidate ][ mot ] ) > 0:
+								new_line_summary.append( "1" )
+							else:
+								new_line_summary.append( "0" )
 		
 		# --- construct a final tree --- #
+		fin_aln_input_file = job_output_folder + "fin_alignment_input.fasta"
+		fin_aln_file = job_output_folder + "fin_alignment_input.fasta.aln"
+		fin_cln_aln_file = job_output_folder + "fin_alignment_input.fasta.aln.cln"
+		tree_file = tree_constructor( aln_input_file, aln_file, cln_aln_file, bait_seq_file, clean_mybs_file, mode, result_folder, name, "05", mafft, raxml, fasttree )
+		
+		# --- construct a final tree with Ath MYBs --- #
+		if len( ath_myb_file ) > 0:
+			ath_fin_aln_input_file = job_output_folder + "ath_fin_alignment_input.fasta"
+			ath_fin_aln_file = job_output_folder + "ath_fin_alignment_input.fasta.aln"
+			ath_fin_cln_aln_file = job_output_folder + "ath_fin_alignment_input.fasta.aln.cln"
+			tree_file = tree_constructor( ath_fin_aln_input_file, ath_fin_aln_file, ath_fin_cln_aln_file, ath_myb_file, clean_mybs_file, mode, result_folder, name, "06", mafft, raxml, fasttree )
+		
+		# --- find in species-specific paralogs (in-paralogs) --- #
+		if collapse_mode:
+			paralog_groups = establish_paralog_groups( tree_file, clean_mybs.keys() )	#get list of sublist; each sublist represents one paralog group
+			paralog_group_file = result_folder + name + "07a_repr_MYBs.txt"
+			repr_clean_myb_file = result_folder + name + "07b_repr_MYBs.fasta"
+			if not os.path.isfile( repr_clean_myb_file ):
+				rep_per_group = get_represenative_paralog_per_group( paralog_groups, clean_mybs, repr_clean_myb_file )
+				with open( paralog_group_file, "w" ) as out:
+					out.write( "RepresentativeSeqID\tMembersOfParalogGroup\n" )
+					for gene in list( rep_per_group.keys() ):
+						for group in paralog_groups:
+							if gene in group:
+								out.write( gene + "\t" + ";".join( group ) + "\n" )
+		
+			# --- represent cluster only by longest sequence --- #
+			if len( ath_myb_file ) > 0:
+				repr_ath_fin_aln_input_file = job_output_folder + "repr_ath_fin_alignment_input.fasta"
+				repr_ath_fin_aln_file = job_output_folder + "repr_ath_fin_alignment_input.fasta.aln"
+				repr_ath_fin_cln_aln_file = job_output_folder + "repr_ath_fin_alignment_input.fasta.aln.cln"
+				tree_file = tree_constructor( repr_ath_fin_aln_input_file, repr_ath_fin_aln_file, repr_ath_fin_cln_aln_file, ath_myb_file, repr_clean_myb_file, mode, result_folder, name, "07c", mafft, raxml, fasttree )
+				
+				# --- define groups for Ath MYBs and include these group names in tip labels of a phylogenetic tree --- #
+				if len( ref_mybs_file ) > 0:	#only performed if reference MYB file is provided
+					ref_mybs = load_ref_mybs( ref_mybs_file )
+					new2ref_mapping_table = load_candidate_myb_to_myb_mapping_table( new_2_ref_myb_mapping_file )
+					repr_and_ath_mybs_for_tree = load_sequences( repr_ath_fin_aln_input_file )
+					repr_and_ath_mybs_fasta_file = result_folder + name + "08a_repr_ath_MYBs.fasta"
+					construct_fasta_file_w_repr_and_ath_MYBs( ref_mybs, new2ref_mapping_table, repr_and_ath_mybs_for_tree, repr_and_ath_mybs_fasta_file )
+					group_aln_input_file = job_output_folder + "group_alignment_input.fasta"
+					group_aln_file = job_output_folder + "group_alignment_input.fasta.aln"
+					group_cln_aln_file = job_output_folder + "group_alignment_input.fasta.aln.cln"
+					tree_file = tree_constructor( group_aln_input_file, group_aln_file, group_cln_aln_file, repr_and_ath_mybs_fasta_file, "", mode, result_folder, name, "08b", mafft, raxml, fasttree )
+		
+		
+		# --- check for presence of MYB domains --- #
+		repr_myb_domain_check_file = result_folder + name + "08d_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
+		if not os.path.isfile( repr_myb_domain_check_file ):
+			MYB_domain_check_wrapper( repr_clean_myb_file, repr_myb_domain_check_file, subject_name_mapping_table )
+		
+		
 		
 		
 
