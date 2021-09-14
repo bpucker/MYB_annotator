@@ -64,7 +64,7 @@ Optional:
 
 `--blastp` specifies the full path to [BLASTp](https://dx.doi.org/10.1093%2Fnar%2F25.17.3389) including the binary.
 
-`--fasttree` specifies the full path to [FastTree2](https://doi.org/10.1371/journal.pone.0009490).
+`--fasttree` specifies the full path to [FastTree2](https://doi.org/10.1371/journal.pone.0009490). This is required if fasttree is not included in the PATH variable. If in doubt, please specify the full path.
 
 `--raxml` specifies the full path to [RAxML](https://doi.org/10.1093/bioinformatics/btz305).
 
