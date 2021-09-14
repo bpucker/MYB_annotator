@@ -124,3 +124,5 @@ Matus, J.T., Aquea, F. & Arce-Johnson, P. Analysis of the grape MYB R2R3 subfami
 
 Sukumaran J, Holder MT. DendroPy: a Python library for phylogenetic computing. Bioinformatics. 2010 Jun 15;26(12):1569-71. doi: [10.1093/bioinformatics/btq228](https://doi.org/10.1093/bioinformatics/btq228). Epub 2010 Apr 25. PMID: 20421198.
 
+Du, H., Liang, Z., Zhao, S. et al. The Evolutionary History of R2R3-MYB Proteins Across 50 Eukaryotes: New Insights Into Subfamily Classification and Expansion. Sci Rep 5, 11037 (2015). https://doi.org/10.1038/srep11037
+
