@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.141"
+__version__ = "v0.143"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -21,6 +21,8 @@ __usage__ = """
 					--collapse <REDUCES IN-PARALOGS_TO_ONE_REPRESENTATIVE>
 					--motifs <MOTIFS_TO_CHECK_FILE>
 					--cpu <NUMBER_OF_THREADS>[4]
+					--cpub <CPUs_TO_USE_FOR_BLASTp>[cpu]
+					--cpur <CPUs_TO_USE_FOR_RAxML>[cpu]
 					--cdsinput <CHANGES_EXPECTED_INPUT_TO_CDS>
 					
 					--mafft <PATH_TO_MAFFT>[mafft]
@@ -31,7 +33,7 @@ __usage__ = """
 					--raxml <PATH_TO_RAXML>[raxml]				
 					
 					--simcutp <BLASTP_SIMILARITY_CUTOFF>[0.8]
-					--poscutp <BLASTP_HIT_NUMBER_PER_BAIT_CUTOFF>[100]
+					--poscutp <BLASTP_POSSIBLE_HIT_NUMBER_PER_BAIT_CUTOFF>[100]
 					--lencutp	<BLASTP_MIN_LENGTH_CUTOFF>[50]
 					
 					bug reports and feature requests: bpucker@cebitec.uni-bielefeld.de
@@ -514,7 +516,7 @@ def md5_calculator( input_file ):
 
 
 def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_folder, raw_subject_file,
-															mode, blastp, makeblastdb, mafft, cpu, raxml, fasttree, ref_mybs_file,
+															mode, blastp, makeblastdb, mafft, cpub, cpur, raxml, fasttree, ref_mybs_file,
 															similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input
 														):
 	"""! @brief write documentation file with specified inputs and parameters """
@@ -532,7 +534,8 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 		
 		#--- optional --- #
 		out.write( "Tool for tree construction: " + mode + "\n" )
-		out.write( "CPUs: " + str( cpu ) + "\n" )
+		out.write( "CPUs for BLASTp: " + str( cpub ) + "\n" )
+		out.write( "CPUs for RAxML: " + str( cpur ) + "\n" )
 		if len( ref_mybs_file ) > 0:
 			ref_myb_file_md5 = md5_calculator( ref_mybs_file )
 			out.write( "Reference MYB file: " + ref_mybs_file + "\t" + ref_myb_file_md5 + "\n" )
@@ -721,7 +724,7 @@ def MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, subject_na
 	sys.stdout.flush()
 
 
-def tree_constructor( X_aln_input_file, X_aln_file, X_cln_aln_file, X_bait_seq_file, X_mybs_file, mode, X_output_folder, Xname, Xnumber, mafft, raxml, fasttree ):
+def tree_constructor( X_aln_input_file, X_aln_file, X_cln_aln_file, X_bait_seq_file, X_mybs_file, mode, X_output_folder, Xname, Xnumber, mafft, raxml, fasttree, cpur ):
 	"""! @brief handles the construction of alignments and phylogenetic tree
 			@note second FASTA file can be an empty string to run this function just based on one FASTA file
 	"""
@@ -745,7 +748,7 @@ def tree_constructor( X_aln_input_file, X_aln_file, X_cln_aln_file, X_bait_seq_f
 		prefix = X_output_folder + Xname + Xnumber + "RAxML_tree"
 		tree_file = prefix + ".raxml.bestTree"
 		if not os.path.isfile( tree_file ):
-			p = subprocess.Popen( args= " ".join( [ raxml, "--all --threads " + str( cpu ) + " --model LG+G8+F --msa", X_cln_aln_file, "--prefix", prefix ] ), shell=True )
+			p = subprocess.Popen( args= " ".join( [ raxml, "--all --threads " + str( cpur ) + " --model LG+G8+F --msa", X_cln_aln_file, "--prefix", prefix ] ), shell=True )
 			p.communicate()
 	else:	#FastTree2
 		tree_file = X_output_folder  + Xname + Xnumber + "FastTree_tree.tre"
@@ -854,6 +857,16 @@ def main( arguments ):
 		cpu = int( arguments[ arguments.index('--cpu')+1 ] )
 	else:
 		cpu = 4
+	
+	if '--cpub' in arguments:
+		cpub = int( arguments[ arguments.index('--cpub')+1 ] )
+	else:
+		cpub = cpu + 0
+	if '--cpur' in arguments:
+		cpur = int( arguments[ arguments.index('--cpur')+1 ] )
+	else:
+		cpur = cpu + 0
+	
 	if '--raxml' in arguments:
 		raxml = arguments[ arguments.index('--raxml')+1 ]
 	else:
@@ -931,7 +944,7 @@ def main( arguments ):
 		
 		doc_file = result_folder + name + "00_documentation.txt"
 		generate_documentation_file( 	doc_file, bait_seq_file, info_file, job_output_folder, raw_subject_file,
-															mode, blastp, makeblastdb, mafft, cpu, raxml, fasttree, ref_mybs_file,
+															mode, blastp, makeblastdb, mafft, cpub, cpur, raxml, fasttree, ref_mybs_file,
 															similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input
 														)
 			
@@ -943,7 +956,7 @@ def main( arguments ):
 			p = subprocess.Popen( args= makeblastdb + " -in " + subject_file + " -out " + blast_db + " -dbtype prot", shell=True )
 			p.communicate()
 			
-			p = subprocess.Popen( args= "blastp -query " + bait_seq_file + " -db " + blast_db + " -out " + blast_result_file + " -outfmt 6 -evalue 0.001 -num_threads " + str( cpu ), shell=True )
+			p = subprocess.Popen( args= "blastp -query " + bait_seq_file + " -db " + blast_db + " -out " + blast_result_file + " -outfmt 6 -evalue 0.001 -num_threads " + str( cpub ), shell=True )
 			p.communicate()
 		
 		blast_results = load_BLAST_results( blast_result_file, similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p )	#load valid BLASTp results
@@ -958,7 +971,7 @@ def main( arguments ):
 		aln_input_file = job_output_folder + "alignment_input.fasta"
 		aln_file = job_output_folder + "alignment_input.fasta.aln"
 		cln_aln_file = job_output_folder + "alignment_input.fasta.aln.cln"
-		tree_file = tree_constructor( aln_input_file, aln_file, cln_aln_file, bait_seq_file, candidate_file, mode, job_output_folder, "", "", mafft, raxml, fasttree )
+		tree_file = tree_constructor( aln_input_file, aln_file, cln_aln_file, bait_seq_file, candidate_file, mode, job_output_folder, "", "", mafft, raxml, fasttree, cpur )
 		
 		
 		# --- analyze tree file --- #
@@ -1047,14 +1060,14 @@ def main( arguments ):
 		fin_aln_input_file = job_output_folder + "fin_alignment_input.fasta"
 		fin_aln_file = job_output_folder + "fin_alignment_input.fasta.aln"
 		fin_cln_aln_file = job_output_folder + "fin_alignment_input.fasta.aln.cln"
-		tree_file = tree_constructor( aln_input_file, aln_file, cln_aln_file, bait_seq_file, clean_mybs_file, mode, result_folder, name, "05", mafft, raxml, fasttree )
+		tree_file = tree_constructor( aln_input_file, aln_file, cln_aln_file, bait_seq_file, clean_mybs_file, mode, result_folder, name, "05", mafft, raxml, fasttree, cpur )
 		
 		# --- construct a final tree with Ath MYBs --- #
 		if len( ath_myb_file ) > 0:
 			ath_fin_aln_input_file = job_output_folder + "ath_fin_alignment_input.fasta"
 			ath_fin_aln_file = job_output_folder + "ath_fin_alignment_input.fasta.aln"
 			ath_fin_cln_aln_file = job_output_folder + "ath_fin_alignment_input.fasta.aln.cln"
-			tree_file = tree_constructor( ath_fin_aln_input_file, ath_fin_aln_file, ath_fin_cln_aln_file, ath_myb_file, clean_mybs_file, mode, result_folder, name, "06", mafft, raxml, fasttree )
+			tree_file = tree_constructor( ath_fin_aln_input_file, ath_fin_aln_file, ath_fin_cln_aln_file, ath_myb_file, clean_mybs_file, mode, result_folder, name, "06", mafft, raxml, fasttree, cpur )
 		
 		# --- find in species-specific paralogs (in-paralogs) --- #
 		if collapse_mode:
@@ -1075,7 +1088,7 @@ def main( arguments ):
 				repr_ath_fin_aln_input_file = job_output_folder + "repr_ath_fin_alignment_input.fasta"
 				repr_ath_fin_aln_file = job_output_folder + "repr_ath_fin_alignment_input.fasta.aln"
 				repr_ath_fin_cln_aln_file = job_output_folder + "repr_ath_fin_alignment_input.fasta.aln.cln"
-				tree_file = tree_constructor( repr_ath_fin_aln_input_file, repr_ath_fin_aln_file, repr_ath_fin_cln_aln_file, ath_myb_file, repr_clean_myb_file, mode, result_folder, name, "07c", mafft, raxml, fasttree )
+				tree_file = tree_constructor( repr_ath_fin_aln_input_file, repr_ath_fin_aln_file, repr_ath_fin_cln_aln_file, ath_myb_file, repr_clean_myb_file, mode, result_folder, name, "07c", mafft, raxml, fasttree, cpur )
 				
 				# --- define groups for Ath MYBs and include these group names in tip labels of a phylogenetic tree --- #
 				if len( ref_mybs_file ) > 0:	#only performed if reference MYB file is provided
@@ -1087,7 +1100,7 @@ def main( arguments ):
 					group_aln_input_file = job_output_folder + "group_alignment_input.fasta"
 					group_aln_file = job_output_folder + "group_alignment_input.fasta.aln"
 					group_cln_aln_file = job_output_folder + "group_alignment_input.fasta.aln.cln"
-					tree_file = tree_constructor( group_aln_input_file, group_aln_file, group_cln_aln_file, repr_and_ath_mybs_fasta_file, "", mode, result_folder, name, "08b", mafft, raxml, fasttree )
+					tree_file = tree_constructor( group_aln_input_file, group_aln_file, group_cln_aln_file, repr_and_ath_mybs_fasta_file, "", mode, result_folder, name, "08b", mafft, raxml, fasttree, cpur )
 		
 		
 				# --- check for presence of MYB domains --- #
