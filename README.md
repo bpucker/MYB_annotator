@@ -74,6 +74,7 @@ Optional:
 
 `--lencutp` specifies the minimal alignment length of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 50.
 
+WARNING: If errors occur or if parameters are changed, it is necessary to delete all output files to get clean files based on the new parameters. Existing files are usually not overwritten.
 
 
 ## Example ##
