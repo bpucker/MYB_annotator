@@ -23,8 +23,7 @@ Mandatory:
 --baits         STR     MYB bait sequence file
 --info          STR     MYB info file
 --out           STR     Output folder
---subject       STR     Subject file
---subjectdir    STR     Subject dir
+--subject       STR     Subject file (OR: --subjectdir    STR     Subject dir)
 					
 Optional:
 --mode          STR     Tool for tree construction (fasttree|raxml)[fasttree]
