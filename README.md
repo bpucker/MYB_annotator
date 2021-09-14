@@ -58,7 +58,7 @@ Optional:
 
 `--cpu` specifies threads to use for the BLASTp search and also for the RAxML tree construction. Default: 4.
 
-`--cdsinput` changes the input expectation from PEP to CDS. The file needs to be supplied through the `--subject`. This flag can be included at any place in the command.
+`--cdsinput` changes the input expectation from PEP to CDS. The file needs to be supplied through the `--subject`. This flag can be included at any place in the command and does not need a value.
 
 `--mafft` specifies the full path to [MAFFT](https://doi.org/10.1093/molbev/mst010) including the binary.
 
