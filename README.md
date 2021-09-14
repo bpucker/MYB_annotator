@@ -114,11 +114,7 @@ Stracke R., Werber M., Weisshaar B. (2001). The R2R3-MYB gene family in _Arabido
 
 Stracke, R., Holtgräwe, D., Schneider, J., Pucker, B., Sörensen, T.R., and Weisshaar, B. (2014). Genome-wide identification and characterisation of R2R3-MYB genes in sugar beet (Beta vulgaris). BMC Plant Biol. 14: 249. doi:[10.1186/s12870-014-0249-8](https://doi.org/10.1186/s12870-014-0249-8).
 
-Naik, J., Rajput, R., Pucker, B., Stracke, R. and Pandey, A. The R2R3-MYB transcription factor MtMYB134 orchestrates flavonol biosynthesis in Medicago truncatula. Plant Mol Biol (2021). doi:[10.1007/s11103-021-01135-x](https://doi.org/10.1007/s11103-021-01135-x).
-
-Matus, J.T., Aquea, F. & Arce-Johnson, P. Analysis of the grape MYB R2R3 subfamily reveals expanded wine quality-related clades and conserved gene structure organization across Vitis and Arabidopsis genomes. BMC Plant Biol 8, 83 (2008). doi:[10.1186/1471-2229-8-83](https://doi.org/10.1186/1471-2229-8-83).
-
 Sukumaran J, Holder MT. DendroPy: a Python library for phylogenetic computing. Bioinformatics. 2010 Jun 15;26(12):1569-71. doi: [10.1093/bioinformatics/btq228](https://doi.org/10.1093/bioinformatics/btq228). Epub 2010 Apr 25. PMID: 20421198.
 
-Du, H., Liang, Z., Zhao, S. et al. The Evolutionary History of R2R3-MYB Proteins Across 50 Eukaryotes: New Insights Into Subfamily Classification and Expansion. Sci Rep 5, 11037 (2015). https://doi.org/10.1038/srep11037
+Du, H., Liang, Z., Zhao, S. et al. The Evolutionary History of R2R3-MYB Proteins Across 50 Eukaryotes: New Insights Into Subfamily Classification and Expansion. Sci Rep 5, 11037 (2015). doi:[10.1038/srep11037](https://doi.org/10.1038/srep11037)
 
