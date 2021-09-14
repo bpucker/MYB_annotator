@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.143"
+__version__ = "v0.144"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -266,7 +266,7 @@ def translate( seqs ):
 def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_input ):
 	"""! @brief clean input FASTA file """
 	
-	forbidden_characters = [ ";", ":", "(", ")", "_" ]
+	forbidden_characters = [ ";", ":", "(", ")", "_", "=" ]
 	
 	with open( mapping_table, "w" ) as out:
 		out.write( "InitialID\tCleanID\n" )
