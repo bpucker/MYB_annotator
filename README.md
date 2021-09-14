@@ -70,7 +70,7 @@ Optional:
 
 `--simcutp` specifies the minimal similarity of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 0.8 (80%).
 
-`--poscutp` specifies the maximal number of hits per bait sequence in the BLASTp analysis. Default: 100.
+`--poscutp` specifies the maximal number of hits (possibilities) per bait sequence in the BLASTp analysis. Default: 100.
 
 `--lencutp` specifies the minimal alignment length of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 50.
 
