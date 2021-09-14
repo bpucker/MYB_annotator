@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.144"
+__version__ = "v0.145"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -694,7 +694,7 @@ def get_represenative_paralog_per_group( paralog_groups, clean_mybs, repr_clean_
 	return paralog_representatives
 
 
-def MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, subject_name_mapping_table ):
+def MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, myb_domain_fasta, myb_domain_doc, subject_name_mapping_table ):
 	"""! @brief check sequences for MYB domains """
 	
 	clean_candidate_myb_sequences = load_sequences( clean_mybs_file )
@@ -704,24 +704,35 @@ def MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, subject_na
 	R1R2R3_MYB_counter = 0
 	pseudo_MYB_counter = 0
 	with open( myb_domain_check_file, "w" ) as out:
-		out.write( "OriginalGeneID\tCleanGeneID\tR2R3-MYB domain status\tR2R3-MYB domain\n" )
-		candidates = list( sorted( clean_candidate_myb_sequences.keys() ) )
-		for candidate in candidates:
-			dom = myb_domains[ candidate ]['domain']
-			out.write( "\t".join( [ subject_name_mapping_table[ candidate ], candidate, dom, myb_domains[ candidate ]['seq'] ] ) + "\n" )
-			if dom == "R1":
-				R1_MYB_counter += 1
-			elif dom == "R2R3":
-				R2R3_MYB_counter += 1
-			elif dom == "3R":
-				R1R2R3_MYB_counter += 1
-			elif dom == "pseudo":
-				pseudo_MYB_counter += 1
-	sys.stdout.write( "Number of 1R-MYBs: " + str( R1_MYB_counter ) + "\n" )
-	sys.stdout.write( "Number of R2R3-MYBs: " + str( R2R3_MYB_counter ) + "\n" )
-	sys.stdout.write( "Number of 3R-MYBs: " + str( R1R2R3_MYB_counter ) + "\n" )
-	sys.stdout.write( "Number of pseudo MYBs and unclassified ones: " + str( pseudo_MYB_counter ) + "\n" )
-	sys.stdout.flush()
+		with open( myb_domain_fasta, "w" ) as out2:
+			out.write( "OriginalGeneID\tCleanGeneID\tR2R3-MYB domain status\tR2R3-MYB domain\n" )
+			candidates = list( sorted( clean_candidate_myb_sequences.keys() ) )
+			for candidate in candidates:
+				dom = myb_domains[ candidate ]['domain']
+				out.write( "\t".join( [ subject_name_mapping_table[ candidate ], candidate, dom, myb_domains[ candidate ]['seq'] ] ) + "\n" )
+				out2.write( '>' + subject_name_mapping_table[ candidate ] + "\n" + myb_domains[ candidate ]['seq'] + "\n" )
+				if dom == "R1":
+					R1_MYB_counter += 1
+				elif dom == "R2R3":
+					R2R3_MYB_counter += 1
+				elif dom == "3R":
+					R1R2R3_MYB_counter += 1
+				elif dom == "pseudo":
+					pseudo_MYB_counter += 1
+	with open( myb_domain_doc, "w" ) as out:
+		sys.stdout.write( "Number of 1R-MYBs: " + str( R1_MYB_counter ) + "\n" )
+		out.write( "Number of 1R-MYBs: " + str( R1_MYB_counter ) + "\n" )
+		
+		sys.stdout.write( "Number of R2R3-MYBs: " + str( R2R3_MYB_counter ) + "\n" )
+		out.write( "Number of R2R3-MYBs: " + str( R2R3_MYB_counter ) + "\n" )
+		
+		sys.stdout.write( "Number of 3R-MYBs: " + str( R1R2R3_MYB_counter ) + "\n" )
+		out.write( "Number of 3R-MYBs: " + str( R1R2R3_MYB_counter ) + "\n" )
+		
+		sys.stdout.write( "Number of pseudo MYBs and unclassified ones: " + str( pseudo_MYB_counter ) + "\n" )
+		out.write( "Number of pseudo MYBs and unclassified ones: " + str( pseudo_MYB_counter ) )
+		
+		sys.stdout.flush()
 
 
 def tree_constructor( X_aln_input_file, X_aln_file, X_cln_aln_file, X_bait_seq_file, X_mybs_file, mode, X_output_folder, Xname, Xnumber, mafft, raxml, fasttree, cpur ):
@@ -799,6 +810,38 @@ def load_candidate_myb_to_myb_mapping_table( new_2_ref_myb_mapping_file ):
 			new2ref_mapping_table.update( { parts[0]: parts[1] } )
 			line = f.readline()
 	return new2ref_mapping_table
+
+
+def summarize_domain_counts( Y_summary_file, raw_subject_files, num_prefix, output_folder, name ):
+	"""! @brief summarize domain numbers of all species """
+	
+	data = []
+	for jidx, raw_subject_file in enumerate( raw_subject_files ):	#use jidx to generate unique IDs for all jobs
+		job_ID = raw_subject_file.split('/')[-1].split('.')[0]
+		job_output_folder = output_folder + str( jidx ).zfill(5) + "_" + job_ID + "/"
+		doc_file = job_output_folder + name + num_prefix + "_MYB_domain_check.doc.txt"
+		tmp = {}
+		with open( doc_file, "r" ) as f:
+			line = f.readline()
+			while line:
+				num = re.findall( "\d+", line )[-1]
+				if "1R-MYBs" in line:
+					tmp.update( { "1R": num } )
+				elif "R2R3-MYBs" in line:
+					tmp.update( { "2R3R": num } )
+				elif "3R-MYBs" in line:
+					tmp.update( { "3R": num } )
+				elif "unclassified ones" in line:
+					tmp.update( { "x": num } )
+				line = f.readline()
+		data.append( { 'id': job_ID, 'info': tmp } )
+	
+	 data = list( sorted( data, key=itemgetter('id') ) )
+	 
+	 with open( Y_summary_file, "w" ) as out:
+		 out.write( "\t".join( [ "SpecID", "1R-MYBs", "R2R3-MYBs", "3R-MYBs", "others" ] ) + "\n" )
+		 for each in data:
+			 out.write( "\t".join( list( map( str, [ each['id'], each['info']['1R'], each['info']['2R3R'], each['info']['3R'], each['info']['x'] ] ) ) ) + "\n" )
 
 
 def main( arguments ):
@@ -1031,9 +1074,11 @@ def main( arguments ):
 																				] ) ) ) + "\n" )	#label, edges, patr
 		
 		# --- check for presence of MYB domains --- #
-		myb_domain_check_file = result_folder + name + "04a_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
+		myb_domain_check_file = result_folder + name + "04a_MYB_domain_check.txt"		#produce table with MYB domain status and sequence
+		myb_domain_fasta_file = result_folder + name + "04c_MYB_domain_check.fasta"		#FASTA file containing MYB domain sequence
+		myb_domain_doc_file = result_folder + name + "04d_MYB_domain_check.doc.txt"		#text file summarizing MYB domain detection results
 		if not os.path.isfile( myb_domain_check_file ):
-			MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, subject_name_mapping_table )
+			MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, myb_domain_fasta_file, myb_domain_doc_file, subject_name_mapping_table )
 		
 		
 		# --- check for different motifs --- #
@@ -1105,8 +1150,18 @@ def main( arguments ):
 		
 				# --- check for presence of MYB domains --- #
 				repr_myb_domain_check_file = result_folder + name + "08d_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
+				repr_myb_domain_fasta_file = result_folder + name + "08e_MYB_domain_check.fasta"	#FASTA file containing MYB domain sequence
+				repr_myb_domain_doc_file = result_folder + name + "08f_MYB_domain_check.doc.txt"	#text file summarizing MYB domain detection results
 				if not os.path.isfile( repr_myb_domain_check_file ):
-					MYB_domain_check_wrapper( repr_clean_myb_file, repr_myb_domain_check_file, subject_name_mapping_table )
+					MYB_domain_check_wrapper( repr_clean_myb_file, repr_myb_domain_check_file, repr_myb_domain_fasta_file, repr_myb_domain_doc_file, subject_name_mapping_table )
+
+	
+	# --- summarize stats of all species --- #
+	if len( raw_subject_files ) > 1:	#only useful if there are more than one species
+		summary_file4 = output_folder + "4_domain_detection_summary.txt"
+		summarize_domain_counts( summary_file4, raw_subject_files, "04c", output_folder, name )
+		summary_file8 = output_folder + "8_domain_detection_summary.txt"
+		summarize_domain_counts( summary_file4, raw_subject_files, "08f", output_folder, name )
 
 
 if '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subject' in sys.argv:
