@@ -101,7 +101,7 @@ _Beta vulgaris_ ([Stracke et al., 2014](https://doi.org/10.1186/s12870-014-0249-
 
 _Musa acuminata_ ([Pucker et al., 2020](https://doi.org/10.1371/journal.pone.0239275))
 
-and a collection by [Du et al., 2015](https://doi.org/10.1038/srep11037): Medicago truncatula, Populus trichocarpa, Citrus sinensis, Vitis vinifera, Solanum lycopersicum, Solanum tuberosum, Aquilegia coerulea, Oryza sativa, Zea mays, Amborella trichopoda, Picea-abies, Selaginella moellendorfii, Physcomitrella patens, Chlamydomonas reinhardtii, Volvox-carteri, Micromonas-pusilla, Ostreococcus-lucimarinus, Cyanidioschyzon-merolae
+and a collection by [Du et al., 2015](https://doi.org/10.1038/srep11037): _Medicago truncatula_, _Populus trichocarpa_, _Citrus sinensis_, _Vitis vinifera_, _Solanum lycopersicum_, _Solanum tuberosum_, _Aquilegia coerulea_, _Oryza sativa_, _Zea mays_, _Amborella trichopoda_, _Picea abies_, _Selaginella moellendorfii_, _Physcomitrella patens_, _Chlamydomonas reinhardtii_, _Volvox carteri_, _Micromonas pusilla_, _Ostreococcus lucimarinus_, and _Cyanidioschyzon merolae_
 
 
 ## References ##
