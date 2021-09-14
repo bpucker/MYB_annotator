@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.14"
+__version__ = "v0.141"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -616,7 +616,7 @@ def motif_check( seqs, motifs ):
 	return results
 
 
-def establish_paralog_groups( tree_file, myb_candidates ):
+def establish_paralog_groups( tree_file, myb_candidates, dist_cutoff_factorB ):
 	"""! @brief construct paralog groups """
 	
 	candidate_mapping_table = {}
@@ -661,7 +661,7 @@ def establish_paralog_groups( tree_file, myb_candidates ):
 			for each in list( sorted( edge_distances, key=itemgetter('dist') ) ):
 				try:
 					candidate_mapping_table[ each['id'] ]
-					if patr_distances[ each['id'] ] < my_mean_nearest_taxon_distance:
+					if patr_distances[ each['id'] ] < ( my_mean_nearest_taxon_distance*dist_cutoff_factorB ):
 						paralogs.append( each['id'] )
 						black_list.update( { each['id']: None } )
 				except KeyError:
@@ -895,6 +895,7 @@ def main( arguments ):
 	neighbour_cutoff=10	#numbers of closest neightbour that is considered in ingroup/outgroup classification
 	mean_factor_cutoff=3	#X*average nearest neighbor distance
 	min_neighbour_cutoff = 0	#minimal number of valid bait sequences (ingroup+outgroup) in range - 1 
+	dist_cutoff_factorB=10	#X*average nearest neighbour distance used as cutoff in the monophyletic tip masking
 	
 	if output_folder[-1] != "/":
 		output_folder += "/"
@@ -1057,7 +1058,7 @@ def main( arguments ):
 		
 		# --- find in species-specific paralogs (in-paralogs) --- #
 		if collapse_mode:
-			paralog_groups = establish_paralog_groups( tree_file, clean_mybs.keys() )	#get list of sublist; each sublist represents one paralog group
+			paralog_groups = establish_paralog_groups( tree_file, clean_mybs.keys(), dist_cutoff_factorB )	#get list of sublist; each sublist represents one paralog group
 			paralog_group_file = result_folder + name + "07a_repr_MYBs.txt"
 			repr_clean_myb_file = result_folder + name + "07b_repr_MYBs.fasta"
 			if not os.path.isfile( repr_clean_myb_file ):
@@ -1089,14 +1090,10 @@ def main( arguments ):
 					tree_file = tree_constructor( group_aln_input_file, group_aln_file, group_cln_aln_file, repr_and_ath_mybs_fasta_file, "", mode, result_folder, name, "08b", mafft, raxml, fasttree )
 		
 		
-		# --- check for presence of MYB domains --- #
-		repr_myb_domain_check_file = result_folder + name + "08d_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
-		if not os.path.isfile( repr_myb_domain_check_file ):
-			MYB_domain_check_wrapper( repr_clean_myb_file, repr_myb_domain_check_file, subject_name_mapping_table )
-		
-		
-		
-		
+				# --- check for presence of MYB domains --- #
+				repr_myb_domain_check_file = result_folder + name + "08d_MYB_domain_check.txt"	#produce table with R2R3-MYB domain status and sequence
+				if not os.path.isfile( repr_myb_domain_check_file ):
+					MYB_domain_check_wrapper( repr_clean_myb_file, repr_myb_domain_check_file, subject_name_mapping_table )
 
 
 if '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subject' in sys.argv:
