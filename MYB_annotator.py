@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.146"
+__version__ = "v0.147"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -819,7 +819,7 @@ def summarize_domain_counts( Y_summary_file, raw_subject_files, num_prefix, outp
 	for jidx, raw_subject_file in enumerate( raw_subject_files ):	#use jidx to generate unique IDs for all jobs
 		job_ID = raw_subject_file.split('/')[-1].split('.')[0]
 		job_output_folder = output_folder + str( jidx ).zfill(5) + "_" + job_ID + "/"
-		doc_file = job_output_folder + name + num_prefix + "_MYB_domain_check.doc.txt"
+		doc_file = job_output_folder + "RESULTS/" + name + num_prefix + "_MYB_domain_check.doc.txt"
 		tmp = {}
 		with open( doc_file, "r" ) as f:
 			line = f.readline()
@@ -1158,9 +1158,10 @@ def main( arguments ):
 	# --- summarize stats of all species --- #
 	if len( raw_subject_files ) > 1:	#only useful if there are more than one species
 		summary_file4 = output_folder + "4_domain_detection_summary.txt"
-		summarize_domain_counts( summary_file4, raw_subject_files, "04c", output_folder, name )
-		summary_file8 = output_folder + "8_domain_detection_summary.txt"
-		summarize_domain_counts( summary_file4, raw_subject_files, "08f", output_folder, name )
+		summarize_domain_counts( summary_file4, raw_subject_files, "04d", output_folder, name )
+		if collapse_mode:
+			summary_file8 = output_folder + "8_domain_detection_summary.txt"
+			summarize_domain_counts( summary_file4, raw_subject_files, "08f", output_folder, name )
 
 
 if '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subject' in sys.argv:
