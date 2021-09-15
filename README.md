@@ -139,13 +139,13 @@ While running the script, several temporary files are generated, but there are n
 
 * **06** this tree is generated based on all _Arabidopsis thaliana_ and the identified clean MYB candidates of your subject file. The tool used for the tree construction depends on your settings.
 
-* **07a_repr_MYBs.txt**
+* **07a_repr_MYBs.txt** this file is generated if you choose to represent groups of paralogs by only one representative sequence (--collapse). 
 
-* **07b_repr_MYBs.fasta**
+* **07b_repr_MYBs.fasta** this file is generated if you choose to represent groups of paralogs by only one representative sequence (--collapse). The sequences contained in this FASTA file represent one group of paralogos. All singletons are included as well.
 
-* **08a_repr_ath_MYBs.fasta**
+* **08a_repr_ath_MYBs.fasta** this file contains all representative sequences (see #7) and also the _Arabidopsis thaliana_ MYB sequences. Therefore, this file is only generated if groups of paralogs are collapsed to one representative sequence (--collapse) and the necessary _Arabidopsis thaliana_ MYB sequences are provided (--ath).
 
-* **08b**
+* **08b** this tree is generated based on all _Arabidopsis thaliana_ and the representative MYB candidate sequences. The tool used for the tree construction depends on your settings. This tree file is only generated if the file '08a' was generated.
 
 * **08d_MYB_domain_check.txt**
 
