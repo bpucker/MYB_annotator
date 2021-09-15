@@ -123,35 +123,35 @@ While running the script, several temporary files are generated, but there are n
 
 * **02b_in_out_MYB_analysis_results.txt** this file provides detailed information about the evidence for inclusion or exclusion, respectively, of each initial MYB candidate. The decision is based on phylogenetic distances between the sequences in your subject set and the bait MYBs supplied. If a candidate is close to many bait sequences that are considered bona fide MYBs, the sequence will be included. If a candidate is located in a clade with MYB-like bait sequences, it will NOT be considered a MYB.
 
-* **03a_group_around_ref_MYBs.txt**
+* **03a_group_around_ref_MYBs.txt** this file is a table which assigns all MYB candidates in the subject species to the provides reference sequences. This file is only generated if such reference sequences are provided (--refmybs).
  
-* **03b_new_2_ref_myb_mapping_file.txt**
+* **03b_new_2_ref_myb_mapping_file.txt** this file is table which assigns the best fitting reference MYB (hopefully the ortholog) to each of the candidate MYBs in your subject data set. This file is only generated if such reference sequences are provided (--refmybs).
 
-* **04a_MYB_domain_check.txt**
+* **04a_MYB_domain_check.txt** this table contains the results of a search for the MYB domains (1R, R23R, 3R, and others) in all of the clean MYB candidates. 
 
-* **04b_motif_check.txt**
+* **04b_motif_check.txt** this table contains the results of a search for a set of provided motifs in all of the clean MYB candidates. This file is only generated if a file with motifs was supplied (--motif).
 
 * **04c_MYB_domain_check.fasta**
 
 * **04d_MYB_domain_check.doc.txt**
 
-* 05
+* **05**
 
-* 06
+* **06**
 
-* 07a_repr_MYBs.txt
+* **07a_repr_MYBs.txt**
 
-* 07b_repr_MYBs.fasta
+* **07b_repr_MYBs.fasta**
 
-* 08a_repr_ath_MYBs.fasta
+* **08a_repr_ath_MYBs.fasta**
 
-* 08b
+* **08b**
 
-* 08d_MYB_domain_check.txt
+* **08d_MYB_domain_check.txt**
 
-* 08e_MYB_domain_check.fasta
+* **08e_MYB_domain_check.fasta**
 
-* 08f_MYB_domain_check.doc.txt
+* **08f_MYB_domain_check.doc.txt**
 
 
 
