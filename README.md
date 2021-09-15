@@ -65,7 +65,19 @@ Optional:
 
 `--cpu` specifies threads to use for the BLASTp search and also for the RAxML tree construction. Default: 4.
 
+`--cpub` specifies specifically the number of threads to use for the BLASTp search. This option can be used if the number of cores to use for BLASTp and RAxML is different. Default is the value of `--cpu`.
+
+`--cpur` specifies specifically the number of threads to use for the RAxML analysis. This option is only relevant if RAxML is used for the tree construction. This option can be used if the number of cores to use for BLASTp and RAxML is different. Default is the value of `--cpu`.
+
 `--cdsinput` changes the input expectation from PEP to CDS. The file needs to be supplied through the `--subject`. This flag can be included at any place in the command and does not need a value.
+
+`--ath` specifies a FASTA file with Arabidopsis thaliana MYB sequences that are used to construct a final tree with the candidate sequences and these reference MYB sequences.
+
+`--name` specifies a string that will be attached as prefix to all file names in the result folder. This option is useful if the result files of different analyses will be combined in one folder in a later step of the project. This name should NOT use any special characters. Just using the numbers 0-9 and the normal characters a-z or A-Z should be save.
+
+`--collapse` this flag triggers and additional analysis step. Group of paralogs will be represented by a single (the longest) sequence. This is helpful if a transcriptome assembly is analyzed which might have many isoforms.
+
+`--motifs` specifies a file with motif sequences and names. All candidate sequences will be screened for these motifs. Many subgroups are characterized by conserved motifs outside the R2R3 domain. This option allows an automatic analysis of all candidates and summarizes the results in a table.
 
 `--mafft` specifies the full path to [MAFFT](https://doi.org/10.1093/molbev/mst010) including the binary.
 
