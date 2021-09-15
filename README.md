@@ -117,10 +117,19 @@ While running the script, several temporary files are generated, but there are n
 
 * **00_documentation.txt** this file stores the command used to run the analysis and also the versions of the tools used for the individual steps. Information contained in this file should be included in the method section when writing a publication about the results of this analysis.
 
+* **01_initial_candidates.fasta** this FASTA file contains all sequences in your subject set that have some similarity to the bait MYB sequences. This selection depends on the setting that you used for the BLASTp search. Usually, this is a very large collection of sequences that have only small similarity to MYBs. Many of these sequences will be discarded in the next step, but this collection is important to achieve high sensitivity. Truncated MYBs could be of high interest and should not be discarded due to short alignments.
+
+* **02a_clean_MYBs.fasta** this FASTA file contains all MYB candidates that fall into the clade of the bait MYB sequences i.e. all MYB-like sequences should be removed at this stage. The accuracy might be low at the basis of the MYB clade, but this approach should allow the inclusion of truncated MYBs that are sitting deep in one of the MYB subgroups.
+
+* **02b_in_out_MYB_analysis_results.txt** this file provides detailed information about the evidence for inclusion or exclusion, respectively, of each initial MYB candidate. The decision is based on phylogenetic distances between the sequences in your subject set and the bait MYBs supplied. If a candidate is close to many bait sequences that are considered bona fide MYBs, the sequence will be included. If a candidate is located in a clade with MYB-like bait sequences, it will NOT be considered a MYB.
+
+*
+
 *
 
 *
 
+*
 
 ## Data sets ##
 
