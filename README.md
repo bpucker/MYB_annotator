@@ -123,13 +123,29 @@ While running the script, several temporary files are generated, but there are n
 
 * **02b_in_out_MYB_analysis_results.txt** this file provides detailed information about the evidence for inclusion or exclusion, respectively, of each initial MYB candidate. The decision is based on phylogenetic distances between the sequences in your subject set and the bait MYBs supplied. If a candidate is close to many bait sequences that are considered bona fide MYBs, the sequence will be included. If a candidate is located in a clade with MYB-like bait sequences, it will NOT be considered a MYB.
 
-*
+* **03a_group_around_ref_MYBs.txt**
+ 
+* **03b_new_2_ref_myb_mapping_file.txt**
+
+* **04a_MYB_domain_check.txt**
+
+* **04b_motif_check.txt**
+
+* **04c_MYB_domain_check.fasta**
+
+* **04d_MYB_domain_check.doc.txt**
 
 *
 
 *
 
 *
+
+*
+
+*
+
+
 
 ## Data sets ##
 
