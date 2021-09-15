@@ -131,13 +131,13 @@ While running the script, several temporary files are generated, but there are n
 
 * **04b_motif_check.txt** this table contains the results of a search for a set of provided motifs in all of the clean MYB candidates. This file is only generated if a file with motifs was supplied (--motif).
 
-* **04c_MYB_domain_check.fasta**
+* **04c_MYB_domain_check.fasta** this file contains all MYB domains identified in the clean MYB candidates.
 
-* **04d_MYB_domain_check.doc.txt**
+* **04d_MYB_domain_check.doc.txt** this file quanifies the number of clean MYB candidates containing a certain domain. Statistics collected in this file can be combined into a summary table if more than one subject file is analyzed.
 
-* **05**
+* **05** this tree is generated based on all MYB bait sequences and the identified clean MYB candidates of your subject file. The tool used for the tree construction depends on your settings.
 
-* **06**
+* **06** this tree is generated based on all _Arabidopsis thaliana_ and the identified clean MYB candidates of your subject file. The tool used for the tree construction depends on your settings.
 
 * **07a_repr_MYBs.txt**
 
@@ -152,6 +152,10 @@ While running the script, several temporary files are generated, but there are n
 * **08e_MYB_domain_check.fasta**
 
 * **08f_MYB_domain_check.doc.txt**
+
+* summary1
+
+* summary2
 
 
 
