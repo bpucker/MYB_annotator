@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.145"
+__version__ = "v0.146"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -835,13 +835,12 @@ def summarize_domain_counts( Y_summary_file, raw_subject_files, num_prefix, outp
 					tmp.update( { "x": num } )
 				line = f.readline()
 		data.append( { 'id': job_ID, 'info': tmp } )
-	
-	 data = list( sorted( data, key=itemgetter('id') ) )
+	data = list( sorted( data, key=itemgetter('id') ) )
 	 
-	 with open( Y_summary_file, "w" ) as out:
-		 out.write( "\t".join( [ "SpecID", "1R-MYBs", "R2R3-MYBs", "3R-MYBs", "others" ] ) + "\n" )
-		 for each in data:
-			 out.write( "\t".join( list( map( str, [ each['id'], each['info']['1R'], each['info']['2R3R'], each['info']['3R'], each['info']['x'] ] ) ) ) + "\n" )
+	with open( Y_summary_file, "w" ) as out:
+		out.write( "\t".join( [ "SpecID", "1R-MYBs", "R2R3-MYBs", "3R-MYBs", "others" ] ) + "\n" )
+		for each in data:
+			out.write( "\t".join( list( map( str, [ each['id'], each['info']['1R'], each['info']['2R3R'], each['info']['3R'], each['info']['x'] ] ) ) ) + "\n" )
 
 
 def main( arguments ):
