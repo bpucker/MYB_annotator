@@ -111,6 +111,17 @@ python3 /my_folder/MYB_annotator.py \
 --raxml /my_folder/bin/RAxML9/raxml-ng \
 ```
 
+## Result files ##
+
+While running the script, several temporary files are generated, but there are not important. Please only look at files located in the 'RESULTS' folder. Here is a list of the possible result files. The generation of some files depends on setting specific options. Therefore, it is possible that you do not see all these files in your result folder. If you specified a prefix (--name), all file names with start with that prefix and thus differ in this respect from the file names listed here.
+
+* **00_documentation.txt** this file stores the command used to run the analysis and also the versions of the tools used for the individual steps. Information contained in this file should be included in the method section when writing a publication about the results of this analysis.
+
+*
+
+*
+
+
 ## Data sets ##
 
 The MYB bait sequences are intended to cover a broad phylogenetic range. The bait sequence set comprises the MYB doamins of:
