@@ -135,15 +135,23 @@ While running the script, several temporary files are generated, but there are n
 
 * **04d_MYB_domain_check.doc.txt**
 
-*
+* 05
 
-*
+* 06
 
-*
+* 07a_repr_MYBs.txt
 
-*
+* 07b_repr_MYBs.fasta
 
-*
+* 08a_repr_ath_MYBs.fasta
+
+* 08b
+
+* 08d_MYB_domain_check.txt
+
+* 08e_MYB_domain_check.fasta
+
+* 08f_MYB_domain_check.doc.txt
 
 
 
