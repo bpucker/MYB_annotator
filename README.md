@@ -29,7 +29,14 @@ Optional:
 --mode          STR     Tool for tree construction (fasttree|raxml)[fasttree]
 --refmybs       STR     Reference MYB file
 --cpu           INT     Number of threads [4]
---cdsinput      STR     Changes expected input to CDS
+--cdsinput      NONE    Changes expected input to CDS
+
+--ath           STR     FASTA file with A. thaliana MYBs
+--name          STR     Prefix of output file names
+--collapse      NONE    Reduces paralogs to one representative
+--motifs        STR     File with motifs to check in candidate sequences
+--cpub          INT     Number of threads for BLASTp[cpu]
+--cpur          INT     Number of threads for RAxML[cpu]
 					
 --mafft         STR     Path to MAFFT [mafft]
 --blastp        STR     Path to blastp [blastp]
