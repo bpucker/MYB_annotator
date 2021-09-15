@@ -147,11 +147,11 @@ While running the script, several temporary files are generated, but there are n
 
 * **08b** this tree is generated based on all _Arabidopsis thaliana_ and the representative MYB candidate sequences. The tool used for the tree construction depends on your settings. This tree file is only generated if the file '08a' was generated.
 
-* **08d_MYB_domain_check.txt**
+* **08d_MYB_domain_check.txt** please seee the full description at #04a for details. This file is the result of the same analysis, but restricted to the representative sequences described above.
 
-* **08e_MYB_domain_check.fasta**
+* **08e_MYB_domain_check.fasta** please seee the full description at #04c for details. This file is the result of the same analysis, but restricted to the representative sequences described above.
 
-* **08f_MYB_domain_check.doc.txt**
+* **08f_MYB_domain_check.doc.txt** please seee the full description at #04d for details. This file is the result of the same analysis, but restricted to the representative sequences described above.
 
 * summary1
 
