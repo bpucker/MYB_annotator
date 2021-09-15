@@ -153,9 +153,9 @@ While running the script, several temporary files are generated, but there are n
 
 * **08f_MYB_domain_check.doc.txt** please seee the full description at #04d for details. This file is the result of the same analysis, but restricted to the representative sequences described above.
 
-* summary1
+* **4_domain_detection_summary.txt** this file is a summary of the MYB domain check results described in #04b across all analyzed species. This file is only generated if more than one species are investigated.
 
-* summary2
+* **8_domain_detection_summary.txt** this file is a summary of the MYB domain check results described in #08f across all analyzed species. It is similar to the one described above, but restricted to the representative sequences of paralog groups. This file is only generated if more than one species are investigated.
 
 
 
