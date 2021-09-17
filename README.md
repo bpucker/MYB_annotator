@@ -126,12 +126,15 @@ While running the script, several temporary files are generated, but there are n
 * **02a_clean_MYBs.fasta** this FASTA file contains all MYB candidates that fall into the clade of the bait MYB sequences i.e. all MYB-like sequences should be removed at this stage. The accuracy might be low at the basis of the MYB clade, but this approach should allow the inclusion of truncated MYBs that are sitting deep in one of the MYB subgroups.
 
 * **02b_in_out_MYB_analysis_results.txt** this file provides detailed information about the evidence for inclusion or exclusion, respectively, of each initial MYB candidate. The decision is based on phylogenetic distances between the sequences in your subject set and the bait MYBs supplied. If a candidate is close to many bait sequences that are considered bona fide MYBs, the sequence will be included. If a candidate is located in a clade with MYB-like bait sequences, it will NOT be considered a MYB.
-	* EdgeDistance = Number of edges between two leaves (sequences) on the tree.
-	* PatristicDistance = Cumulative length of all nodes between two leaves (sequences) on the tree.
+	* Score = Ratio of ingroup matches to outgroup matches.
+	* IngroupMatches = Number of nearest neighbours (only baits considered) in the tree that are ingroup members.
+	* OutgroupMatches = Number of nearest neighbours  (only baits considered) in the tree that are outgroup members.
 
 * **03a_group_around_ref_MYBs.txt** this file is a table which assigns all MYB candidates in the subject species to the provides reference sequences. This file is only generated if such reference sequences are provided (--refmybs).
  
 * **03b_new_2_ref_myb_mapping_file.txt** this file is table which assigns the best fitting reference MYB (hopefully the ortholog) to each of the candidate MYBs in your subject data set. This file is only generated if such reference sequences are provided (--refmybs).
+	* EdgeDistance = Number of edges between two leaves (sequences) on the tree.
+	* PatristicDistance = Cumulative length of all nodes between two leaves (sequences) on the tree.
 
 * **04a_MYB_domain_check.txt** this table contains the results of a search for the MYB domains (1R, R23R, 3R, and others) in all of the clean MYB candidates. Regulator expressions are used to identify 3R, R2R3, or 1R motifs. If none of them is detected, the candidate is classified as other/pseudo-MYB. Here are the regular expressions used for the three domains:
 
