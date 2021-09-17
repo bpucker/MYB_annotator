@@ -73,6 +73,8 @@ Optional:
 
 `--cdsinput` changes the input expectation from PEP to CDS. The file needs to be supplied through the `--subject`. This flag can be included at any place in the command and does not need a value.
 
+`--keepnames` this flag deactivates the trimming of the names of input sequences at the first space. This flag can be included at any place in the command and does not need a value.
+
 `--ath` specifies a FASTA file with Arabidopsis thaliana MYB sequences that are used to construct a final tree with the candidate sequences and these reference MYB sequences.
 
 `--name` specifies a string that will be attached as prefix to all file names in the result folder. This option is useful if the result files of different analyses will be combined in one folder in a later step of the project. This name should NOT use any special characters. Just using the numbers 0-9 and the normal characters a-z or A-Z should be save.
