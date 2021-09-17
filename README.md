@@ -129,7 +129,16 @@ While running the script, several temporary files are generated, but there are n
  
 * **03b_new_2_ref_myb_mapping_file.txt** this file is table which assigns the best fitting reference MYB (hopefully the ortholog) to each of the candidate MYBs in your subject data set. This file is only generated if such reference sequences are provided (--refmybs).
 
-* **04a_MYB_domain_check.txt** this table contains the results of a search for the MYB domains (1R, R23R, 3R, and others) in all of the clean MYB candidates. 
+* **04a_MYB_domain_check.txt** this table contains the results of a search for the MYB domains (1R, R23R, 3R, and others) in all of the clean MYB candidates. Regulator expressions are used to identify 3R, R2R3, or 1R motifs. If none of them is detected, the candidate is classified as other/pseudo-MYB. Here are the regular expressions used for the three domains:
+
+R1 = '\w{3,4}W\w{17,21}W\w{17,21}W\w{5,8}'
+
+R2 = '\w{5}[WF]{1}\w{18,21}W\w{15,27}[WY]{1}\w{4}'	#F at pos1 and Y at pos3 are very rare
+
+R3 = "\w{5}[WLIMF]{1}\w{14,21}W\w{17,21}[WYF]{1}\w{4}"	#diversity at pos1 is high, but po2 and pos3 are conserved
+
+These MYB domain patterns based on Feng et al., 2017 (doi: 10.1093/gbe/evx056) and Du et al., 2015 (doi: 10.1038/srep11037), and Pucker et al., 2020 
+
 
 * **04b_motif_check.txt** this table contains the results of a search for a set of provided motifs in all of the clean MYB candidates. This file is only generated if a file with motifs was supplied (--motif).
 
