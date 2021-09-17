@@ -32,6 +32,7 @@ Optional:
 --refmybs       STR     Reference MYB file
 --cpu           INT     Number of threads [4]
 --cdsinput      NONE    Changes expected input to CDS
+--keepnames     NONE    Prevents splitting of sequence names at first space
 
 --ath           STR     FASTA file with A. thaliana MYBs
 --name          STR     Prefix of output file names
