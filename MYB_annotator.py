@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.149"
+__version__ = "v0.150"
 
 __usage__ = """
 					python3 MYB_annotator.py
