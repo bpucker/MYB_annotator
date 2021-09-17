@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.147"
+__version__ = "v0.148"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -710,7 +710,10 @@ def MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, myb_domain
 			for candidate in candidates:
 				dom = myb_domains[ candidate ]['domain']
 				out.write( "\t".join( [ subject_name_mapping_table[ candidate ], candidate, dom, myb_domains[ candidate ]['seq'] ] ) + "\n" )
-				out2.write( '>' + subject_name_mapping_table[ candidate ] + "\n" + myb_domains[ candidate ]['seq'] + "\n" )
+				Y_seq_ID = subject_name_mapping_table[ candidate ]
+				if " " in Y_seq_ID:
+					Y_seq_ID = Y_seq_ID.split(' ')[0]	#cut name at first space
+				out2.write( '>' + Y_seq_ID+ "\n" + myb_domains[ candidate ]['seq'] + "\n" )
 				if dom == "R1":
 					R1_MYB_counter += 1
 				elif dom == "R2R3":
