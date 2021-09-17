@@ -124,6 +124,8 @@ While running the script, several temporary files are generated, but there are n
 * **02a_clean_MYBs.fasta** this FASTA file contains all MYB candidates that fall into the clade of the bait MYB sequences i.e. all MYB-like sequences should be removed at this stage. The accuracy might be low at the basis of the MYB clade, but this approach should allow the inclusion of truncated MYBs that are sitting deep in one of the MYB subgroups.
 
 * **02b_in_out_MYB_analysis_results.txt** this file provides detailed information about the evidence for inclusion or exclusion, respectively, of each initial MYB candidate. The decision is based on phylogenetic distances between the sequences in your subject set and the bait MYBs supplied. If a candidate is close to many bait sequences that are considered bona fide MYBs, the sequence will be included. If a candidate is located in a clade with MYB-like bait sequences, it will NOT be considered a MYB.
+	* EdgeDistance = Number of edges between two leaves (sequences) on the tree.
+	* PatristicDistance = Cumulative length of all nodes between two leaves (sequences) on the tree.
 
 * **03a_group_around_ref_MYBs.txt** this file is a table which assigns all MYB candidates in the subject species to the provides reference sequences. This file is only generated if such reference sequences are provided (--refmybs).
  
