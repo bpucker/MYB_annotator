@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.148"
+__version__ = "v0.149"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -24,6 +24,7 @@ __usage__ = """
 					--cpub <CPUs_TO_USE_FOR_BLASTp>[cpu]
 					--cpur <CPUs_TO_USE_FOR_RAxML>[cpu]
 					--cdsinput <CHANGES_EXPECTED_INPUT_TO_CDS>
+					--keepnames <PREVENTS_CUTTING_OF_NAMES_AT_FIRST_SPACE>
 					
 					--mafft <PATH_TO_MAFFT>[mafft]
 					--blastp <PATH_TO_AND_INCLUDING_BINARY>[blastp]
@@ -263,7 +264,7 @@ def translate( seqs ):
 	return final_peptide_seqs
 
 
-def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_input ):
+def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_input, trim_names ):
 	"""! @brief clean input FASTA file """
 	
 	forbidden_characters = [ ";", ":", "(", ")", "_", "=" ]
@@ -273,6 +274,9 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 		sequences = {}
 		with open( raw_subject_file ) as f:
 			header = f.readline()[1:].strip()
+			if trim_names:
+				if " " in header:
+					header = header.split(' ')[0]
 			out.write( header + "\t" )
 			if " " in header:
 				header = header.split(' ')[0]
@@ -286,6 +290,9 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 				if line[0] == '>':
 						sequences.update( { header: "".join( seq ) } )
 						header = line.strip()[1:]
+						if trim_names:
+							if " " in header:
+								header = header.split(' ')[0]
 						out.write( header + "\t" )
 						if " " in header:
 							header = header.split(' ')[0]
@@ -400,7 +407,7 @@ def load_myb_classification_from_file( tmp_result_table ):
 	return myb_classification
 
 
-def MYB_comain_check( seqs ):
+def MYB_domain_check( seqs ):
 	"""! @brief screen sequences for R2R3-MYB domain """
 	
 	domain_status = {}
@@ -522,7 +529,7 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 	"""! @brief write documentation file with specified inputs and parameters """
 	
 	with open( doc_file, "w" ) as out:
-		out.write( "Please cite XXX when using MYB_annotator.py.\n\n" )
+		out.write( "Please cite Pucker, 2021 when using MYB_annotator.py.\n\n" )
 		out.write( "MYB_annotator.py version: " + __version__ + "\n" )
 		bait_seq_file_md5 = md5_calculator( bait_seq_file )
 		out.write( "MYB bait file: " + bait_seq_file + "\t" + bait_seq_file_md5 + "\n" )
@@ -698,7 +705,7 @@ def MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, myb_domain
 	"""! @brief check sequences for MYB domains """
 	
 	clean_candidate_myb_sequences = load_sequences( clean_mybs_file )
-	myb_domains = MYB_comain_check( clean_candidate_myb_sequences )	#based on banana MYB paper: https://doi.org/10.1371/journal.pone.0239275
+	myb_domains = MYB_domain_check( clean_candidate_myb_sequences )	#based on banana MYB paper: https://doi.org/10.1371/journal.pone.0239275
 	R1_MYB_counter = 0
 	R2R3_MYB_counter = 0
 	R1R2R3_MYB_counter = 0
@@ -710,10 +717,10 @@ def MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, myb_domain
 			for candidate in candidates:
 				dom = myb_domains[ candidate ]['domain']
 				out.write( "\t".join( [ subject_name_mapping_table[ candidate ], candidate, dom, myb_domains[ candidate ]['seq'] ] ) + "\n" )
-				Y_seq_ID = subject_name_mapping_table[ candidate ]
-				if " " in Y_seq_ID:
-					Y_seq_ID = Y_seq_ID.split(' ')[0]	#cut name at first space
-				out2.write( '>' + Y_seq_ID+ "\n" + myb_domains[ candidate ]['seq'] + "\n" )
+				# Y_seq_ID = subject_name_mapping_table[ candidate ]
+				# if " " in Y_seq_ID:
+					# Y_seq_ID = Y_seq_ID.split(' ')[0]	#cut name at first space
+				out2.write( '>' + subject_name_mapping_table[ candidate ]+ "\n" + myb_domains[ candidate ]['seq'] + "\n" )
 				if dom == "R1":
 					R1_MYB_counter += 1
 				elif dom == "R2R3":
@@ -950,6 +957,11 @@ def main( arguments ):
 	else:
 		cds_input = False
 	
+	if "--keepnames" in arguments:
+		trim_names = False
+	else:
+		trim_names = True
+	
 	neighbour_cutoff=10	#numbers of closest neightbour that is considered in ingroup/outgroup classification
 	mean_factor_cutoff=3	#X*average nearest neighbor distance
 	min_neighbour_cutoff = 0	#minimal number of valid bait sequences (ingroup+outgroup) in range - 1 
@@ -976,7 +988,7 @@ def main( arguments ):
 		subject_file = job_output_folder + "clean_subject_sequences.fasta"
 		mapping_table_file = job_output_folder + "raw_subject_to_clean_subject_mapping_table.txt"
 		if not os.path.isfile( subject_file ):
-			clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table_file, cds_input )	#remove illegal characters from subject sequence headers
+			clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table_file, cds_input, trim_names )	#remove illegal characters from subject sequence headers
 		MYB_check_status = check_MYB_IDs_across_files( bait_seq_file, info_file, ref_mybs_file )
 		if not MYB_check_status:
 			sys.exit( "ERROR: analysis is stopped due to inconstistency of MYB IDs between files" )
