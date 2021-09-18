@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.150"
+__version__ = "v0.151"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -277,9 +277,13 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 			if trim_names:
 				if " " in header:
 					header = header.split(' ')[0]
+					if "\t" in header:
+						header = header.split('\t')[0]
 			out.write( header + "\t" )
 			if " " in header:
 				header = header.split(' ')[0]
+			if "\t" in header:
+				header = header.split('\t')[0]
 			for each in forbidden_characters:
 				header = header.replace( each, "-" )
 			header = header.encode("ascii", "ignore").decode()	#removal of non-ASCII characters
@@ -293,9 +297,13 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 						if trim_names:
 							if " " in header:
 								header = header.split(' ')[0]
+								if "\t" in header:
+									header = header.split('\t')[0]
 						out.write( header + "\t" )
 						if " " in header:
 							header = header.split(' ')[0]
+						if "\t" in header:
+							header = header.split('\t')[0]
 						for each in forbidden_characters:
 							header = header.replace( each, "-" )
 						header = header.encode("ascii", "ignore").decode()
