@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.151b"
+__version__ = "v0.152"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -315,11 +315,15 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 			sequences.update( { header: "".join( seq ) } )
 	
 	if cds_input:
-		sequences = translate( sequences )
+		cds_file = subject_file.replace( ".pep.fasta", ".cds.fasta" )
+		pep_sequences = translate( sequences )
+		with open( cds_file, "r" ) as f:	#construct file with clean CDS
+			for key in sequences.keys():
+				out.write( '>' + key + "\n" + sequences[ key ] + "\n" )
 	
-	with open( subject_file, "w" ) as out:
-		for key in sequences.keys():
-			out.write( '>' + key + "\n" + sequences[ key ] + "\n" )
+	with open( subject_file, "w" ) as out:	#construct file with clean PEPs
+		for key in pep_sequences.keys():
+			out.write( '>' + key + "\n" + pep_sequences[ key ] + "\n" )
 
 
 def load_ref_mybs( ref_mybs_file ):
@@ -993,7 +997,7 @@ def main( arguments ):
 	
 		# --- validation of inputs --- #
 		#check if all MYB baits are listed in the info file
-		subject_file = job_output_folder + "clean_subject_sequences.fasta"
+		subject_file = job_output_folder + "clean_subject_sequences.pep.fasta"
 		mapping_table_file = job_output_folder + "raw_subject_to_clean_subject_mapping_table.txt"
 		if not os.path.isfile( subject_file ):
 			clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table_file, cds_input, trim_names )	#remove illegal characters from subject sequence headers
@@ -1027,10 +1031,18 @@ def main( arguments ):
 		blast_results = load_BLAST_results( blast_result_file, similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p )	#load valid BLASTp results
 		
 		subject_sequences = load_sequences( subject_file )
-		candidate_file = result_folder + name + "01_initial_candidates.fasta"
+		if cds_input:
+			cds_subject_sequences = load_sequences( subject_file.replace( ".pep.fasta", ".cds.fasta" ) )
+		
+		candidate_file = result_folder + name + "01_initial_candidates.pep.fasta"
 		with open( candidate_file, "w" ) as out:
 			for each in blast_results.keys():
 				out.write( '>' + each + "\n" + subject_sequences[ each ] + "\n" )
+		if cds_input:
+			cds_candidate_file = candidate_file.replace( ".pep.fasta", ".cds.fasta" )
+			with open( cds_candidate_file, "w" ) as out:
+				for each in blast_results.keys():
+					out.write( '>' + each + "\n" + cds_subject_sequences[ each ] + "\n" )
 		
 		# --- construct phylogenetic tree --- #
 		aln_input_file = job_output_folder + "alignment_input.fasta"
@@ -1063,6 +1075,12 @@ def main( arguments ):
 																						myb_classification[ candidate ]['in'],
 																						myb_classification[ candidate ]['out']
 																					] ) ) ) + "\n" )
+			if cds_input:	#generate corresponding CDS clean MYB output file
+				cds_clean_mybs_file = clean_mybs_file.replace( ".pep.fasta", ".cds.fasta" )
+				with open( cds_clean_mybs_file, "w" ) as out:
+					for candidate in candidate_order:
+						if myb_classification[ candidate ]['score'] > 0.5:
+							out.write( '>' + candidate + "\n" + cds_subject_sequences[ candidate ] + "\n" )
 		else:
 			myb_classification = load_myb_classification_from_file( tmp_result_table )
 		clean_mybs = load_sequences( clean_mybs_file )
@@ -1149,6 +1167,12 @@ def main( arguments ):
 						for group in paralog_groups:
 							if gene in group:
 								out.write( gene + "\t" + ";".join( group ) + "\n" )
+				if cds_input:
+					cds_repr_clean_myb_file = repr_clean_myb_file.replace( ".pep.fasta", ".cds.fasta" )
+					with open( cds_repr_clean_myb_file, "w" ) as out:
+						for key in list( rep_per_group.keys() ):
+							out.write( '>' + key + "\n" + cds_subject_sequences[ key ] + "\n" )
+						
 		
 			# --- represent cluster only by longest sequence --- #
 			if len( ath_myb_file ) > 0:
