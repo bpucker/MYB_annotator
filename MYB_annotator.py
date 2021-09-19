@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.152"
+__version__ = "v0.153"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -321,9 +321,14 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 			for key in sequences.keys():
 				out.write( '>' + key + "\n" + sequences[ key ] + "\n" )
 	
-	with open( subject_file, "w" ) as out:	#construct file with clean PEPs
-		for key in pep_sequences.keys():
-			out.write( '>' + key + "\n" + pep_sequences[ key ] + "\n" )
+		with open( subject_file, "w" ) as out:	#construct file with clean PEPs
+			for key in pep_sequences.keys():
+				out.write( '>' + key + "\n" + pep_sequences[ key ] + "\n" )
+			
+	else:
+		with open( subject_file, "w" ) as out:	#construct file with clean PEPs
+			for key in sequences.keys():
+				out.write( '>' + key + "\n" + sequences[ key ] + "\n" )
 
 
 def load_ref_mybs( ref_mybs_file ):
@@ -877,7 +882,7 @@ def main( arguments ):
 		subject_file_dir = arguments[ arguments.index('--subjectdir')+1 ]
 		if not subject_file_dir[-1] == "/":
 			subject_file_dir + "/"
-		extensions = [ ".fasta", ".fa", ".fas", ".FASTA", ".FA", ".FAS", ".fna", ".FNA" ]
+		extensions = [ ".fasta", ".fa", ".fas", ".FASTA", ".FA", ".FAS", ".fna", ".FNA", ".cds", ".CDS", ".pep", ".PEP" ]
 		raw_subject_files = [ ]
 		for each in extensions:
 			raw_subject_files += glob.glob( subject_file_dir + "*" + each )
