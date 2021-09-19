@@ -317,7 +317,7 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 	if cds_input:
 		cds_file = subject_file.replace( ".pep.fasta", ".cds.fasta" )
 		pep_sequences = translate( sequences )
-		with open( cds_file, "r" ) as f:	#construct file with clean CDS
+		with open( cds_file, "w" ) as out:	#construct file with clean CDS
 			for key in sequences.keys():
 				out.write( '>' + key + "\n" + sequences[ key ] + "\n" )
 	
@@ -1052,7 +1052,7 @@ def main( arguments ):
 		
 		
 		# --- analyze tree file --- #
-		clean_mybs_file = result_folder + name + "02a_clean_MYBs.fasta"
+		clean_mybs_file = result_folder + name + "02a_clean_MYBs.pep.fasta"
 		tmp_result_table = result_folder + name + "02b_in_out_MYB_analysis_results.txt"
 		if not os.path.isfile( tmp_result_table ):
 			in_list, out_list = load_bait_MYB_anno( info_file )
@@ -1115,7 +1115,7 @@ def main( arguments ):
 		
 		# --- check for presence of MYB domains --- #
 		myb_domain_check_file = result_folder + name + "04a_MYB_domain_check.txt"		#produce table with MYB domain status and sequence
-		myb_domain_fasta_file = result_folder + name + "04c_MYB_domain_check.fasta"		#FASTA file containing MYB domain sequence
+		myb_domain_fasta_file = result_folder + name + "04c_MYB_domain_check.pep.fasta"		#FASTA file containing MYB domain sequence
 		myb_domain_doc_file = result_folder + name + "04d_MYB_domain_check.doc.txt"		#text file summarizing MYB domain detection results
 		if not os.path.isfile( myb_domain_check_file ):
 			MYB_domain_check_wrapper( clean_mybs_file, myb_domain_check_file, myb_domain_fasta_file, myb_domain_doc_file, subject_name_mapping_table )
@@ -1158,7 +1158,7 @@ def main( arguments ):
 		if collapse_mode:
 			paralog_groups = establish_paralog_groups( tree_file, clean_mybs.keys(), dist_cutoff_factorB )	#get list of sublist; each sublist represents one paralog group
 			paralog_group_file = result_folder + name + "07a_repr_MYBs.txt"
-			repr_clean_myb_file = result_folder + name + "07b_repr_MYBs.fasta"
+			repr_clean_myb_file = result_folder + name + "07b_repr_MYBs.pep.fasta"
 			if not os.path.isfile( repr_clean_myb_file ):
 				rep_per_group = get_represenative_paralog_per_group( paralog_groups, clean_mybs, repr_clean_myb_file )
 				with open( paralog_group_file, "w" ) as out:
