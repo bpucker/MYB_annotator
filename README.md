@@ -199,6 +199,8 @@ and a collection by [Du et al., 2015](https://doi.org/10.1038/srep11037): _Medic
 
 ## References ##
 
+Pucker B (2021). Automatic identification and annotation of MYB gene family members in plants. bioRxiv 2021.10.16.464636; doi:[10.1101/2021.10.16.464636](https://doi.org/10.1101/2021.10.16.464636).
+
 Pucker, B., Reiher, F. and Schilbert, H. M. Automatic identification of players in the flavonoid biosynthesis with application on the biomedicinal plant _Croton tiglium_. Plants 2020, 9, 1103. doi:[10.3390/plants9091103](https://www.mdpi.com/2223-7747/9/9/1103/htm).
 
 Pucker B., Pandey A., Weisshaar B. and Stracke R. (2020). The R2R3-MYB gene family in banana (_Musa acuminata_): genome-wide identification, classification and expression patterns. PLOS ONE 15(10): e0239275. doi:[10.1371/journal.pone.0239275](https://doi.org/10.1371/journal.pone.0239275).
