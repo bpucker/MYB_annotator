@@ -5,3 +5,8 @@ channels:
 dependencies:
  - python=3.8
  - dendropy
+ - mafft
+ - fasttree
+ - blast
+ - hmmer
+ - raxml-ng
