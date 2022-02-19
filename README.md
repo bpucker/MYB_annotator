@@ -39,6 +39,7 @@ Mandatory:
 --subject       STR     Subject file (OR: --subjectdir    STR     Subject dir)
 					
 Optional:
+--search        STR     Tool for initial search (blast|hmmer)[blast]
 --mode          STR     Tool for tree construction (fasttree|raxml)[fasttree]
 --refmybs       STR     Reference MYB file
 --cpu           INT     Number of threads [4]
