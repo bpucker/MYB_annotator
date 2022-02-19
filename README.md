@@ -55,6 +55,7 @@ Optional:
 					
 --mafft         STR     Path to MAFFT [mafft]
 --blastp        STR     Path to blastp [blastp]
+--hmmsearch     STR     Path to hmmsearch [hmmsearch]
 --makeblastdb   STR     Path to makeblastdb [makeblastdb]			
 --fasttree      STR     Path to FastTree [fasttree]
 --raxml         STR     Path to RAxML [raxml]				
@@ -106,6 +107,8 @@ Optional:
 `--mafft` specifies the full path to [MAFFT](https://doi.org/10.1093/molbev/mst010) including the binary.
 
 `--blastp` specifies the full path to [BLASTp](https://dx.doi.org/10.1093%2Fnar%2F25.17.3389) including the binary.
+
+`--hmmsearch` specifies the full path to [hmmsearch](http://hmmer.org/) including the binary.
 
 `--fasttree` specifies the full path to [FastTree2](https://doi.org/10.1371/journal.pone.0009490). This is required if fasttree is not included in the PATH variable. If in doubt, please specify the full path.
 
