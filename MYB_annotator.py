@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.200"
+__version__ = "v0.201"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -40,10 +40,10 @@ __usage__ = """
 					--poscutp <BLASTP_POSSIBLE_HIT_NUMBER_PER_BAIT_CUTOFF>[100]
 					--lencutp	<BLASTP_MIN_LENGTH_CUTOFF>[50]
 					
-					--numneighbours INT     Neighbours to consider for classification [10]
-					--neighbourdist FLOAT   Cutoff in neighbour identification [3]
-					--minneighbours INT     Minimal number of bait neighbours for classification [0]
-					--paralogdist   FLOAT   Distance cutoff in paralog maksing [10]
+					--numneighbours <NUMBER_OF_NEIGHBOURS_FOR_CLASSIFICATION> [10]
+					--neighbourdist <NEIGHBOUR_DISTANCE> [3]
+					--minneighbours <MINIMAL_NUMBER_OF_NEIGHBOURS> [0]
+					--paralogdist <DISTANCE_OF_PARALOGS_IN_MASKING_STEP> [10]
 					
 					bug reports and feature requests: b.pucker@tu-braunschweig.de
 					"""
