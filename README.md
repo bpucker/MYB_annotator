@@ -15,10 +15,15 @@ This tool allows an automatic identification and analysis of MYBs in a CDS or pe
 
 There is no installation of this tool required. Downloading and executing the script on a Linux system is sufficient. There is currently no support for other operating systems. Most required modules should be included in the initial Python installation. Requirements are (Linux installation instructions):
 
-[Python3](https://www.python.org/) (sudo apt-get install python3.8)
+[Python3](https://www.python.org/) (sudo apt-get install python3.8). It is also possible to use other Python3 versions.
 
 [dendropy](https://dendropy.readthedocs.io/en/main/) (python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git)
 
+[MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html)
+
+[BLAST](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (sudo apt-get install ncbi-blast+)
+
+[FastTree](http://www.microbesonline.org/fasttree/#Install) and/or [RAxML-NG](https://github.com/amkozlov/raxml-ng)
 
 
 ## Usage ##
