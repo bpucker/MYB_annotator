@@ -26,15 +26,15 @@ git clone https://github.com/bpucker/MYB_annotator
 <details>
 <summary>how to install conda(click to expand)</summary>
 <p>
-wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh
+```wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh```
 
-bash Anaconda3-2020.02-Linux-x86_64.sh
+```bash Anaconda3-2020.02-Linux-x86_64.sh```
 
-rm Anaconda3-2020.02-Linux-x86_64.sh
+```rm Anaconda3-2020.02-Linux-x86_64.sh```
 
-echo 'export PATH="~/anaconda/bin:$PATH"' >> ~/.bashrc 
+```echo 'export PATH="~/anaconda/bin:$PATH"' >> ~/.bashrc```
 
-source ~/.bashrc
+```source ~/.bashrc```
 </p>
 </details>	
 	
@@ -44,7 +44,7 @@ source ~/.bashrc
 ```conda activate mybannotator```
 
 
-Requirement tools are (Linux installation instructions):
+Required tools are (Linux installation instructions):
 
 [MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html) (sudo apt-get install -y mafft)
 
