@@ -27,16 +27,21 @@ git clone https://github.com/bpucker/MYB_annotator
 <summary>how to install conda(click to expand)</summary>
 <p>
 wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh
+
 bash Anaconda3-2020.02-Linux-x86_64.sh
+
 rm Anaconda3-2020.02-Linux-x86_64.sh
+
 echo 'export PATH="~/anaconda/bin:$PATH"' >> ~/.bashrc 
+
 source ~/.bashrc
 </p>
 </details>	
 	
-conda env create -f environment.yml
+```conda env create -f environment.yml```
 
-conda activate mybannotator
+
+```conda activate mybannotator```
 
 
 Requirement tools are (Linux installation instructions):
