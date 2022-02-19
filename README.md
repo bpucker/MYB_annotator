@@ -48,9 +48,9 @@ While some dependencies are required, this tool does not require an installation
 
 Required tools are (Linux installation instructions):
 
-[MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html) (sudo apt-get install -y mafft)
+[MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html) (```sudo apt-get install -y mafft```)
 
-[BLAST](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (sudo apt-get install ncbi-blast+) or [HMMER](http://hmmer.org/documentation.html)
+[BLAST](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (```sudo apt-get install ncbi-blast+```) or [HMMER](http://hmmer.org/documentation.html)
 
 [FastTree](http://www.microbesonline.org/fasttree/#Install) and/or [RAxML-NG](https://github.com/amkozlov/raxml-ng)
 
