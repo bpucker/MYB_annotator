@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.153"
+__version__ = "v0.155"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -14,7 +14,9 @@ __usage__ = """
 					--subject <SUBJECT_FILE (peptide,transcript,genomic sequences)> | --subjectdir <SUBJECT_FOLDER_WITH_SEQ_FILES>
 					
 					optional:
+					--search <INITIAL_SEARCH_TOOL>(blast|hmmer)[blast]
 					--mode <TREE_BUILDER>(fasttree|raxml)[fasttree]
+					--hmm <MYB_BAIT_HMM_FILE>
 					--refmybs <REF_MYB_FILE>
 					--ath <ATH_MYB_FILE_FOR_FINAL_TREE>
 					--name <STRING_USED_AS_PREFIX_IN_FILENAMES>
@@ -28,6 +30,7 @@ __usage__ = """
 					
 					--mafft <PATH_TO_MAFFT>[mafft]
 					--blastp <PATH_TO_AND_INCLUDING_BINARY>[blastp]
+					--hmmsearch <PATH_TO_HMMSEARCH>[hmmsearch]
 					--makeblastdb <PATH_TO_AND_INCLUDING_BINARY>[makeblastdb]
 					
 					--fasttree <PATH_TO_FASTTREE>[fasttree]
@@ -37,7 +40,12 @@ __usage__ = """
 					--poscutp <BLASTP_POSSIBLE_HIT_NUMBER_PER_BAIT_CUTOFF>[100]
 					--lencutp	<BLASTP_MIN_LENGTH_CUTOFF>[50]
 					
-					bug reports and feature requests: bpucker@cebitec.uni-bielefeld.de
+					--numneighbours INT     Neighbours to consider for classification [10]
+					--neighbourdist FLOAT   Cutoff in neighbour identification [3]
+					--minneighbours INT     Minimal number of bait neighbours for classification [0]
+					--paralogdist   FLOAT   Distance cutoff in paralog maksing [10]
+					
+					bug reports and feature requests: b.pucker@tu-braunschweig.de
 					"""
 
 import os, glob, sys, re, subprocess, dendropy
@@ -540,9 +548,10 @@ def md5_calculator( input_file ):
 
 
 def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_folder, raw_subject_file,
-															mode, blastp, makeblastdb, mafft, cpub, cpur, raxml, fasttree, ref_mybs_file,
-															similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input
-														):
+														search, mode, blastp, makeblastdb, mafft, cpub, cpur, raxml, fasttree, ref_mybs_file,
+														similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input, hmmsearch,
+														neighbour_cutoff,mean_factor_cutoff,min_neighbour_cutoff,dist_cutoff_factorB
+													):
 	"""! @brief write documentation file with specified inputs and parameters """
 	
 	with open( doc_file, "w" ) as out:
@@ -557,6 +566,7 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 		out.write( "Output folder: " + output_folder + "\n" )
 		
 		#--- optional --- #
+		out.write( "Tool for initial candidate selection: " + search + "\n" )
 		out.write( "Tool for tree construction: " + mode + "\n" )
 		out.write( "CPUs for BLASTp: " + str( cpub ) + "\n" )
 		out.write( "CPUs for RAxML: " + str( cpur ) + "\n" )
@@ -582,6 +592,13 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 		out.write( "Maximal number of BLASTp hits per bait: " + str( possibility_cutoff_p ) + "\n" )
 		out.write( "Minimal BLASTp hit alignment length: " + str( length_cutoff_p ) + "\n" )
 		
+		# --- tree analysis settings --- #
+		out.write( "Number of neighbours to consider in classification: " + str( neighbour_cutoff ) + "\n" )
+		out.write( "Factor for branch length cutoff in identification of neighbours: " + str( mean_factor_cutoff ) + "\n" )
+		out.write( "Minimal number of neighbours required for classification as MYB: " + str( min_neighbour_cutoff ) + "\n" )
+		out.write( "Distance cutoff for paralog clade masking: " + str( dist_cutoff_factorB ) + "\n" )
+		
+		
 		# --- add tool versions --- #
 		try:
 			mafft_version_raw = subprocess.Popen( args=mafft + " --version", stderr=subprocess.PIPE, shell=True )
@@ -596,6 +613,12 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 			out.write ( "RAxML version: " + ( raxml_version[4:65]) + "...\n" )	#remove characters introduced through binary
 		except:
 			out.write ( "RAxML version detection failed.\n" )	#if no RAxML installation was detected
+		try:
+			hmmsearch_version_raw = subprocess.Popen( args=hmmsearch + " -h", stdout=subprocess.PIPE, shell=True )
+			hmmsearch_version = str( raxml_version_raw.stdout.read() ).strip().split('\n')[1]
+			out.write ( "hmmsearch version: " + ( hmmsearch_version ) + "...\n" )	#remove characters introduced through binary
+		except:
+			out.write ( "hmmsearch version detection failed.\n" )	#if no hmmsearch installation was detected
 
 
 def load_subject_name_mapping_table( mapping_table_file ):
@@ -791,7 +814,7 @@ def tree_constructor( X_aln_input_file, X_aln_file, X_cln_aln_file, X_bait_seq_f
 	else:	#FastTree2
 		tree_file = X_output_folder  + Xname + Xnumber + "FastTree_tree.tre"
 		if not os.path.isfile( tree_file ):
-			p = subprocess.Popen( args= " ".join( [ fasttree, "-wag  -nopr -nosupport <", X_cln_aln_file, ">", tree_file ] ), shell=True )
+			p = subprocess.Popen( args= " ".join( [ fasttree, "-wag -nopr -nosupport <", X_cln_aln_file, ">", tree_file ] ), shell=True )
 			p.communicate()
 	return tree_file
 
@@ -870,6 +893,24 @@ def summarize_domain_counts( Y_summary_file, raw_subject_files, num_prefix, outp
 			out.write( "\t".join( list( map( str, [ each['id'], each['info']['1R'], each['info']['2R3R'], each['info']['3R'], each['info']['x'] ] ) ) ) + "\n" )
 
 
+def load_hmmsearch_results( seq_search_result_file ):
+	"""! @brief load all hmmsearch hits into a dictionary """
+	
+	hmm_search_results = {}
+	with open( seq_search_result_file, "r" ) as f:
+		line = f.readline()
+		while line:
+			if line[0] != "#":
+				if "\t" in line:
+					hmm_search_results.update( { line.split('\t')[0]: None } )
+				elif " " in line:
+					hmm_search_results.update( { line.split(' ')[0]: None } )
+				else:
+					print( line )
+			line = f.readline()
+	return hmm_search_results
+
+
 def main( arguments ):
 	"""! @brief run everything """
 	
@@ -887,6 +928,16 @@ def main( arguments ):
 		for each in extensions:
 			raw_subject_files += glob.glob( subject_file_dir + "*" + each )
 		raw_subject_files = list( sorted( raw_subject_files ) )
+	
+	if '--search' in arguments:
+		search = arguments[ arguments.index('--search')+1 ]
+		if search not in [ "blast", "hmmer" ]:
+			search = "blast"
+	else:
+		search = "blast"
+	
+	if search == "hmmer":
+		myb_bait_hmm = arguments[ arguments.index('--hmm')+1 ]
 	
 	if '--mode' in arguments:
 		mode = arguments[ arguments.index('--mode')+1 ]
@@ -922,6 +973,11 @@ def main( arguments ):
 		mafft = arguments[ arguments.index('--mafft')+1 ]
 	else:
 		mafft = "mafft"
+	if '--hmmsearch' in arguments:
+		hmmsearch = arguments[ arguments.index('--hmmsearch')+1 ]
+	else:
+		hmmsearch = "hmmsearch"
+	
 	if '--cpu' in arguments:
 		cpu = int( arguments[ arguments.index('--cpu')+1 ] )
 	else:
@@ -979,10 +1035,27 @@ def main( arguments ):
 	else:
 		trim_names = True
 	
-	neighbour_cutoff=10	#numbers of closest neightbour that is considered in ingroup/outgroup classification
-	mean_factor_cutoff=3	#X*average nearest neighbor distance
-	min_neighbour_cutoff = 0	#minimal number of valid bait sequences (ingroup+outgroup) in range - 1 
-	dist_cutoff_factorB=10	#X*average nearest neighbour distance used as cutoff in the monophyletic tip masking
+	### new options ###
+	if '--numneighbours' in arguments:
+		neighbour_cutoff = int( arguments[ arguments.index('--numneighbours')+1 ] )
+	else:
+		neighbour_cutoff=10	#numbers of closest neightbour that is considered in ingroup/outgroup classification
+	
+	if '--neighbourdist' in arguments:
+		mean_factor_cutoff = float( arguments[ arguments.index('--neighbourdist')+1 ] )
+	else:
+		mean_factor_cutoff=3.0	#X*average nearest neighbor distance
+	
+	if "--minneighbours" in arguments:
+		min_neighbour_cutoff = int( arguments[ arguments.index('--minneighbours')+1 ] )
+	else:
+		min_neighbour_cutoff = 0	#minimal number of valid bait sequences (ingroup+outgroup) in range - 1 
+	
+	if '--paralogdist' in arguments:
+		dist_cutoff_factorB = float( arguments[ arguments.index('--paralogdist')+1 ] )
+	else:
+		dist_cutoff_factorB=10.0	#X*average nearest neighbour distance used as cutoff in the monophyletic tip masking
+	
 	
 	if output_folder[-1] != "/":
 		output_folder += "/"
@@ -1018,22 +1091,30 @@ def main( arguments ):
 		
 		doc_file = result_folder + name + "00_documentation.txt"
 		generate_documentation_file( 	doc_file, bait_seq_file, info_file, job_output_folder, raw_subject_file,
-															mode, blastp, makeblastdb, mafft, cpub, cpur, raxml, fasttree, ref_mybs_file,
-															similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input
+															search, mode, blastp, makeblastdb, mafft, cpub, cpur, raxml, fasttree, ref_mybs_file,
+															similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input, hmmsearch,
+															neighbour_cutoff,mean_factor_cutoff,min_neighbour_cutoff,dist_cutoff_factorB
 														)
 			
 		
 		# --- find initial candidates --- #
-		blast_result_file = job_output_folder + "blast_results.fasta"
-		if not os.path.isfile( blast_result_file ):
-			blast_db = job_output_folder + "blastdb"
-			p = subprocess.Popen( args= makeblastdb + " -in " + subject_file + " -out " + blast_db + " -dbtype prot", shell=True )
-			p.communicate()
-			
-			p = subprocess.Popen( args= "blastp -query " + bait_seq_file + " -db " + blast_db + " -out " + blast_result_file + " -outfmt 6 -evalue 0.001 -num_threads " + str( cpub ), shell=True )
-			p.communicate()
+		seq_search_result_file = job_output_folder + "seq_search_results.txt"
+		if not os.path.isfile( seq_search_result_file ):
+			if search == "blast":
+				blast_db = job_output_folder + "blastdb"
+				p = subprocess.Popen( args= makeblastdb + " -in " + subject_file + " -out " + blast_db + " -dbtype prot", shell=True )
+				p.communicate()
+				
+				p = subprocess.Popen( args= "blastp -query " + bait_seq_file + " -db " + blast_db + " -out " + seq_search_result_file + " -outfmt 6 -evalue 0.001 -num_threads " + str( cpub ), shell=True )
+				p.communicate()
+			else:
+				p = subprocess.Popen( args= hmmsearch + " --tblout " + seq_search_result_file + " " + myb_bait_hmm + " " + subject_file + " > " + job_output_folder+"hmmsearch_waste.txt", shell=True )
+				p.communicate()
 		
-		blast_results = load_BLAST_results( blast_result_file, similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p )	#load valid BLASTp results
+		if search == "blast":
+			seq_search_results = load_BLAST_results( seq_search_result_file, similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p )	#load valid BLASTp results
+		else:
+			seq_search_results = load_hmmsearch_results( seq_search_result_file )	#load valid hmmsearch results
 		
 		subject_sequences = load_sequences( subject_file )
 		if cds_input:
@@ -1041,12 +1122,12 @@ def main( arguments ):
 		
 		candidate_file = result_folder + name + "01_initial_candidates.pep.fasta"
 		with open( candidate_file, "w" ) as out:
-			for each in blast_results.keys():
+			for each in seq_search_results.keys():
 				out.write( '>' + each + "\n" + subject_sequences[ each ] + "\n" )
 		if cds_input:
 			cds_candidate_file = candidate_file.replace( ".pep.fasta", ".cds.fasta" )
 			with open( cds_candidate_file, "w" ) as out:
-				for each in blast_results.keys():
+				for each in seq_search_results.keys():
 					out.write( '>' + each + "\n" + cds_subject_sequences[ each ] + "\n" )
 		
 		# --- construct phylogenetic tree --- #
@@ -1216,9 +1297,28 @@ def main( arguments ):
 			summarize_domain_counts( summary_file4, raw_subject_files, "08f", output_folder, name )
 
 
-if '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subject' in sys.argv:
-	main( sys.argv )
-elif '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subjectdir' in sys.argv:
-	main( sys.argv )
-else:
-	sys.exit( __usage__ )
+
+### --- check that the required information is included in the input --- ###
+if "--search" in sys.argv:	#initial search could be based on hmmsearch
+	if sys.argv[ sys.argv.index( '--search' )+1 ] == "hmmer":
+		if '--hmm' in sys.argv and '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subject' in sys.argv:
+			main( sys.argv )
+		elif '--hmm' in sys.argv and '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subjectdir' in sys.argv:
+			main( sys.argv )
+		else:
+			sys.exit( __usage__ )
+	else:
+		if '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subject' in sys.argv:
+			main( sys.argv )
+		elif '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subjectdir' in sys.argv:
+			main( sys.argv )
+		else:
+			sys.exit( __usage__ )
+	
+else:	#initial search is based on BLAST (default)
+	if '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subject' in sys.argv:
+		main( sys.argv )
+	elif '--baits' in sys.argv and '--info' in sys.argv and '--out' in sys.argv and '--subjectdir' in sys.argv:
+		main( sys.argv )
+	else:
+		sys.exit( __usage__ )
