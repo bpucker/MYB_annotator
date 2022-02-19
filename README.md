@@ -16,7 +16,7 @@ This tool allows an automatic identification and analysis of MYBs in a CDS or pe
 While some dependencies are required, this tool does not require an installation. Downloading and executing the script on a Linux system is sufficient. There is currently no support for other operating systems. Most required modules are included in the initial Python installation, but dendropy might not be available on all systems. 
 
 
-### Installation via conda
+### Option A: Installation via conda
 
 ```git clone https://github.com/bpucker/MYB_annotator```
 
@@ -45,7 +45,7 @@ While some dependencies are required, this tool does not require an installation
 
 
 
-### Manual installation (with the necessary privileges)
+### Option B: Manual installation (with the necessary privileges)
 [Python3](https://www.python.org/) (```sudo apt-get install python3.8```). It is also possible to use other Python3 versions.
 
 [dendropy](https://dendropy.readthedocs.io/en/main/) (```sudo apt install python3-pip && python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git```)
