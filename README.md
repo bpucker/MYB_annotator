@@ -41,6 +41,7 @@ Mandatory:
 Optional:
 --search        STR     Tool for initial search (blast|hmmer)[blast]
 --mode          STR     Tool for tree construction (fasttree|raxml)[fasttree]
+--hmm           STR     HMM file of MYB baits
 --refmybs       STR     Reference MYB file
 --cpu           INT     Number of threads [4]
 --cdsinput      NONE    Changes expected input to CDS
@@ -83,6 +84,8 @@ Optional:
 `--search` specifies the tool for the initial identification of candidates. [BLAST](https://doi.org/10.1186/1471-2105-10-421) or [HMMER](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3125773/) can be used for this purpose. Default is BLAST.
 
 `--mode` specifies the tool for the construction of phylogenetic trees. [RAxML](https://doi.org/10.1093/bioinformatics/btz305) ('raxml') or [FastTree2](https://doi.org/10.1371/journal.pone.0009490) ('fasttree') can be specified. Default is 'fasttree'. Running the tree construction with RAxML is expected to result in slightly more accurate results, but would increase the run time from minutes to days in many cases.
+
+`--hmm` specifies a HMM file that represents the bait MYBs. This file is required when using hmmsearch for the identification of initial candidates.
 
 `--refmybs` specifies a text file with one MYB ID per line. All IDs listed in this file need to be present in the baits FASTA file and the info file. These IDs can be used for the functional annotation of the newly identified MYBs. This assignment is performed in two ways leading to two different output tables. The functional annotation is lifted from previously characterized sequences to newly identified orthologs. 
 
