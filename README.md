@@ -95,7 +95,7 @@ Optional:
 
 `--cpur` specifies specifically the number of threads to use for the RAxML analysis. This option is only relevant if RAxML is used for the tree construction. This option can be used if the number of cores to use for BLASTp and RAxML is different. Default is the value of `--cpu`.
 
-`--cdsinput` changes the input expectation from PEP to CDS. The file needs to be supplied through the `--subject`. This flag can be included at any place in the command and does not need a value.
+`--cdsinput` changes the input expectation from PEP to CDS. The file needs to be supplied through the `--subject`. This flag can be included at any place in the command and does not need a value. The coding sequences will be translated pior to the analysis.
 
 `--keepnames` this flag deactivates the trimming of the names of input sequences at the first space. This flag can be included at any place in the command and does not need a value.
 
