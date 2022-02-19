@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.155"
+__version__ = "v0.200"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -1095,7 +1095,6 @@ def main( arguments ):
 															similarity_cutoff_p, possibility_cutoff_p, length_cutoff_p, cds_input, hmmsearch,
 															neighbour_cutoff,mean_factor_cutoff,min_neighbour_cutoff,dist_cutoff_factorB
 														)
-			
 		
 		# --- find initial candidates --- #
 		seq_search_result_file = job_output_folder + "seq_search_results.txt"
