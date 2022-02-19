@@ -77,7 +77,7 @@ Optional:
 
 `--out` specifies the output folder. This folder will be created if it does not exist already. All files generated during the analysis will be placed in this folder. There is a subfolder called 'RESULTS' that contains the important final files.
 
-`--subject` specifies the FASTA file that should be analysed. The default expectation is that this file contains peptide sequences. However, it is also possible to supply a collection of coding sequences (CDS) if the `--cdsinput` flag is set.
+`--subject` specifies the FASTA file that should be analysed. The default expectation is that this file contains peptide sequences. However, it is also possible to supply a collection of coding sequences (CDS) if the `--cdsinput` flag is set. Providing a file with only primary transcript/peptide sequences can result in different results compared to collection of all isoforms. This is especially important with respect to the MYB domain which might be incomplete in some isoforms.
 
 `--subjectdir` specifies a folder with FASTA files. All files need to contain sequences of the same type (PEP or CDS). Supported file extensions are '.fasta', '.fas', '.fa', '.FASTA', '.FAS', '.FA', '.fna', '.FNA', '.cds', '.CDS', '.pep', and '.PEP'.
 
