@@ -117,6 +117,15 @@ Optional:
 
 `--lencutp` specifies the minimal alignment length of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 50.
 
+`--numneighbours` this specifies the number of neighbouring sequences in a phylogenetic tree that will be considered for the classification as MYB or MYB-like, respectively. Default: 10.
+
+`--neighbourdist` specifies the factor by which the average branch length is multiplied when deciding about the consideration of neighbouring sequences, because sequences sitting on very long branches are ignored in this step. Increasing this value will enhance the sensitivity of sequence detection at the cost of specificity. Larger values should be tested when looking for completely new MYB clades in phylogenetic lineages that are not well covered by the collection of bait sequences. Default: 3.
+
+`--minneighbours` specifies the minimal number of neighbours that is required for the classification of sequences. If there are no close neighbours, a sequence might be sitting at an extremely long branch. Therefore, it can be appropriate to exclude sequences without any neighbouring sequences from the set of clean MYBs. Default: 0.
+
+`--paralogdist` specifies the maximal distance of paralogs in one clade during the masking/collapsing step. A clade of paralogs can be reduced to one representative sequence. This is particularly helpful when working with transcriptome assemblies that contain an inflated number of alternative transcripts. Default: 10.
+
+
 WARNING: If errors occur or if parameters are changed, it is necessary to delete all output files to get clean files based on the new parameters. Existing files are usually not overwritten.
 
 
