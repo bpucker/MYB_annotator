@@ -79,6 +79,8 @@ Optional:
 
 `--subjectdir` specifies a folder with FASTA files. All files need to contain sequences of the same type (PEP or CDS). Supported file extensions are '.fasta', '.fas', '.fa', '.FASTA', '.FAS', '.FA', '.fna', '.FNA', '.cds', '.CDS', '.pep', and '.PEP'.
 
+`--search` specifies the tool for the initial identification of candidates. [BLAST](https://doi.org/10.1186/1471-2105-10-421) or [HMMER](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3125773/) can be used for this purpose. Default is BLAST.
+
 `--mode` specifies the tool for the construction of phylogenetic trees. [RAxML](https://doi.org/10.1093/bioinformatics/btz305) ('raxml') or [FastTree2](https://doi.org/10.1371/journal.pone.0009490) ('fasttree') can be specified. Default is 'fasttree'. Running the tree construction with RAxML is expected to result in slightly more accurate results, but would increase the run time from minutes to days in many cases.
 
 `--refmybs` specifies a text file with one MYB ID per line. All IDs listed in this file need to be present in the baits FASTA file and the info file. These IDs can be used for the functional annotation of the newly identified MYBs. This assignment is performed in two ways leading to two different output tables. The functional annotation is lifted from previously characterized sequences to newly identified orthologs. 
