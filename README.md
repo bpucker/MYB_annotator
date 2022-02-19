@@ -21,7 +21,7 @@ There is no installation of this tool required. Downloading and executing the sc
 
 [MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html)
 
-[BLAST](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (sudo apt-get install ncbi-blast+)
+[BLAST](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (sudo apt-get install ncbi-blast+) or [HMMER](http://hmmer.org/documentation.html)
 
 [FastTree](http://www.microbesonline.org/fasttree/#Install) and/or [RAxML-NG](https://github.com/amkozlov/raxml-ng)
 
