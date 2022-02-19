@@ -13,13 +13,35 @@ This tool allows an automatic identification and analysis of MYBs in a CDS or pe
 
 ## Installation ##
 
-There is no installation of this tool required. Downloading and executing the script on a Linux system is sufficient. There is currently no support for other operating systems. Most required modules should be included in the initial Python installation. Requirements are (Linux installation instructions):
+While some dependencies are required, this tool does not require an installation. Downloading and executing the script on a Linux system is sufficient. There is currently no support for other operating systems. Most required modules are included in the initial Python installation, but dendropy might not be available on all systems. 
 
+### Manual installation with the necessary privileges
 [Python3](https://www.python.org/) (sudo apt-get install python3.8). It is also possible to use other Python3 versions.
 
-[dendropy](https://dendropy.readthedocs.io/en/main/) (python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git)
+[dendropy](https://dendropy.readthedocs.io/en/main/) (sudo apt install python3-pip && python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git)
 
-[MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html)
+### Installation via conda
+git clone https://github.com/bpucker/MYB_annotator
+
+<details>
+<summary>how to install conda(click to expand)</summary>
+<p>
+wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh
+bash Anaconda3-2020.02-Linux-x86_64.sh
+rm Anaconda3-2020.02-Linux-x86_64.sh
+echo 'export PATH="~/anaconda/bin:$PATH"' >> ~/.bashrc 
+source ~/.bashrc
+</p>
+</details>	
+	
+conda env create -f environment.yml
+
+conda activate mybannotator
+
+
+Requirement tools are (Linux installation instructions):
+
+[MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html) (sudo apt-get install -y mafft)
 
 [BLAST](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (sudo apt-get install ncbi-blast+) or [HMMER](http://hmmer.org/documentation.html)
 
