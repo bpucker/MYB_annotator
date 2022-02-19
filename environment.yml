@@ -1,0 +1,5 @@
+name: mybanno
+dependencies:
+ - python=3.8
+ - dendropy=4.3.0
+ - hashlib
