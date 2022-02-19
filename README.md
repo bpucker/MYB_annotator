@@ -21,11 +21,13 @@ While some dependencies are required, this tool does not require an installation
 [dendropy](https://dendropy.readthedocs.io/en/main/) (sudo apt install python3-pip && python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git)
 
 ### Installation via conda
-git clone https://github.com/bpucker/MYB_annotator
+
+```git clone https://github.com/bpucker/MYB_annotator```
 
 <details>
 <summary>how to install conda(click to expand)</summary>
 <p>
+
 ```wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh```
 
 ```bash Anaconda3-2020.02-Linux-x86_64.sh```
