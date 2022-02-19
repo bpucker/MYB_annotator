@@ -50,9 +50,9 @@ Required tools are (Linux installation instructions):
 
 [MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html) (```sudo apt-get install -y mafft```)
 
-[BLAST](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (```sudo apt-get install ncbi-blast+```) or [HMMER](http://hmmer.org/documentation.html)
+[BLAST](https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (```sudo apt-get install ncbi-blast+```) or [HMMER](http://hmmer.org/documentation.html)(```conda install -c bioconda hmmer```)
 
-[FastTree](http://www.microbesonline.org/fasttree/#Install) and/or [RAxML-NG](https://github.com/amkozlov/raxml-ng)
+[FastTree](http://www.microbesonline.org/fasttree/#Install) (```sudo apt-get install -y fasttree```) and/or [RAxML-NG](https://github.com/amkozlov/raxml-ng) (precompiled binaries recommended)
 
 
 ## Usage ##
