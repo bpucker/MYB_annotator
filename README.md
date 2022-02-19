@@ -171,7 +171,7 @@ While running the script, several temporary files are generated, but there are n
 	* EdgeDistance = Number of edges between two leaves (sequences) on the tree.
 	* PatristicDistance = Cumulative length of all nodes between two leaves (sequences) on the tree.
 
-* **04a_MYB_domain_check.txt** this table contains the results of a search for the MYB domains (1R, R23R, 3R, and others) in all of the clean MYB candidates. Regulator expressions are used to identify 3R, R2R3, or 1R motifs. If none of them is detected, the candidate is classified as other/pseudo-MYB. Here are the regular expressions used for the three domains:
+* **04a_MYB_domain_check.txt** this table contains the results of a search for the MYB domains (1R, R23R, 3R, and others) in all of the clean MYB candidates. Regular expressions are used to identify 3R, R2R3, or 1R motifs. If none of them is detected, the candidate is classified as other/pseudo-MYB. Here are the regular expressions used for the three domains:
 
 	* R1 = '\w{3,4}W\w{17,21}W\w{17,21}W\w{5,8}'
 
@@ -179,7 +179,7 @@ While running the script, several temporary files are generated, but there are n
 
 	* R3 = "\w{5}[WLIMF]{1}\w{14,21}W\w{17,21}[WYF]{1}\w{4}"	#diversity at pos1 is high, but po2 and pos3 are conserved
 
-	These MYB domain patterns are based on [Feng et al., 2017](https://doi.org/10.1093/gbe/evx056), [Du et al., 2015](https://doi.org/10.1038/srep11037), and [Pucker et al., 2020](https://doi.org/10.1371/journal.pone.0239275).
+	These MYB domain patterns are based on [Feng et al., 2017](https://doi.org/10.1093/gbe/evx056), [Du et al., 2015](https://doi.org/10.1038/srep11037), and [Pucker et al., 2020](https://doi.org/10.1371/journal.pone.0239275). The category 'others' comprises all sequences that lack one of the afore mentioned domains. Genes can be included in this category if the analyzed transcript/peptide isoforms lacks a part of the domain. This can happen if only the 'primary' transcript/peptide sequence is provided.
 
 
 * **04b_motif_check.txt** this table contains the results of a search for a set of provided motifs in all of the clean MYB candidates. This file is only generated if a file with motifs was supplied (--motif).
