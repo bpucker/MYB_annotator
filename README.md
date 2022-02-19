@@ -44,9 +44,9 @@ While some dependencies are required, this tool does not require an installation
 
 
 ### Manual installation (with the necessary privileges)
-[Python3](https://www.python.org/) (sudo apt-get install python3.8). It is also possible to use other Python3 versions.
+[Python3](https://www.python.org/) (```sudo apt-get install python3.8```). It is also possible to use other Python3 versions.
 
-[dendropy](https://dendropy.readthedocs.io/en/main/) (sudo apt install python3-pip && python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git)
+[dendropy](https://dendropy.readthedocs.io/en/main/) (```sudo apt install python3-pip && python3 -m pip install git+https://github.com/jeetsukumaran/DendroPy.git```)
 
 [MAFFT](https://mafft.cbrc.jp/alignment/software/linuxportable.html) (```sudo apt-get install -y mafft```)
 
