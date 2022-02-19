@@ -61,6 +61,11 @@ Optional:
 --simcutp       FLOAT   BLASTp similarity cutoff [0.8]
 --poscutp       INT     Max number of BLASTp hits per bait [100]
 --lencutp	INT     Min BLASTp alignment length [50]
+
+--numneighbours INT     Neighbours to consider for classification [10]
+--neighbourdist FLOAT   Cutoff in neighbour identification [3]
+--minneighbours INT     Minimal number of bait neighbours for classification [0]
+--paralogdist   FLOAT   Distance cutoff in paralog maksing [10]
 ```
 
 `--baits` specifies a FASTA file that contains the MYB bait sequences. Some of these sequences are _bona fide_ MYBs and other are MYB-like sequences that are used as outgroup.
