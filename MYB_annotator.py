@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.201"
+__version__ = "v0.203"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -555,7 +555,7 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 	"""! @brief write documentation file with specified inputs and parameters """
 	
 	with open( doc_file, "w" ) as out:
-		out.write( "Please cite Pucker, 2021 when using MYB_annotator.py.\n\n" )
+		out.write( "Please cite 'Pucker B (2021). Automatic identification and annotation of MYB gene family members in plants. doi:10.1101/2021.10.16.464636' when using MYB_annotator.py.\n\n" )
 		out.write( "MYB_annotator.py version: " + __version__ + "\n" )
 		bait_seq_file_md5 = md5_calculator( bait_seq_file )
 		out.write( "MYB bait file: " + bait_seq_file + "\t" + bait_seq_file_md5 + "\n" )
@@ -608,7 +608,7 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 			out.write ( "MAFFT version detection failed.\n" )	#if no MAFFT installation was detected
 		out.write ( "FastTree version: PLEASE_ADD_MANUALLY\n"  )	#version not available via command
 		try:
-			raxml_version_raw = subprocess.Popen( args=raxml + " --version", stdout=subprocess.PIPE, shell=True )
+			raxml_version_raw = subprocess.Popen( args=raxml + " --version", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True )
 			raxml_version = str( raxml_version_raw.stdout.read() ).strip()
 			out.write ( "RAxML version: " + ( raxml_version[4:65]) + "...\n" )	#remove characters introduced through binary
 		except:
