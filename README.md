@@ -20,6 +20,8 @@ While some dependencies are required, this tool does not require an installation
 
 ```git clone https://github.com/bpucker/MYB_annotator```
 
+```cd MYB_annotator```
+
 <details>
 <summary>how to install conda(click to expand)</summary>
 <p>
