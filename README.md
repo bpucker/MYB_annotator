@@ -93,7 +93,7 @@ Optional:
 					
 --simcutp       FLOAT   BLASTp similarity cutoff [0.8]
 --poscutp       INT     Max number of BLASTp hits per bait [100]
---lencutp	INT     Min BLASTp alignment length [50]
+--lencutp	INT     Min BLASTp alignment length [75]
 
 --numneighbours INT     Neighbours to consider for classification [10]
 --neighbourdist FLOAT   Cutoff in neighbour identification [3]
@@ -151,7 +151,7 @@ Optional:
 
 `--poscutp` specifies the maximal number of hits (possibilities) per bait sequence in the BLASTp analysis. Default: 100.
 
-`--lencutp` specifies the minimal alignment length of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 50.
+`--lencutp` specifies the minimal alignment length of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 75.
 
 `--numneighbours` this specifies the number of neighbouring sequences in a phylogenetic tree that will be considered for the classification as MYB or MYB-like, respectively. Default: 10.
 
