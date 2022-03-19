@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.203"
+__version__ = "v0.204"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -1169,6 +1169,8 @@ def main( arguments ):
 		else:
 			myb_classification = load_myb_classification_from_file( tmp_result_table )
 		clean_mybs = load_sequences( clean_mybs_file )
+		if len( list( clean_mybs.keys() ) ):
+			sys.exit( "ERROR: no MYBs detected." )
 		
 		# --- find closest reference MYB --- #
 		if len( ref_mybs_file ) > 0:	#only performed if reference MYB file is provided
