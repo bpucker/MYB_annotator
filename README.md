@@ -257,7 +257,7 @@ and a collection by [Du et al., 2015](https://doi.org/10.1038/srep11037): _Medic
 
 ## References ##
 
-Pucker B (2021). Automatic identification and annotation of MYB gene family members in plants. bioRxiv 2021.10.16.464636; doi:[10.1101/2021.10.16.464636](https://doi.org/10.1101/2021.10.16.464636).
+Pucker B (2022). Automatic identification and annotation of MYB gene family members in plants. BMC Genomics 23, 220 (2022). https://doi.org/10.1186/s12864-022-08452-5.
 
 Pucker, B., Reiher, F. and Schilbert, H. M. Automatic identification of players in the flavonoid biosynthesis with application on the biomedicinal plant _Croton tiglium_. Plants 2020, 9, 1103. doi:[10.3390/plants9091103](https://www.mdpi.com/2223-7747/9/9/1103/htm).
 
