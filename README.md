@@ -224,7 +224,7 @@ While running the script, several temporary files are generated, but there are n
 
 * **07a_repr_MYBs.txt** this file is generated if you choose to represent groups of paralogs by only one representative sequence (--collapse). 
 
-* **07b_repr_MYBs.fasta** this file is generated if you choose to represent groups of paralogs by only one representative sequence (--collapse). The sequences contained in this FASTA file represent one group of paralogos. All singletons are included as well.
+* **07b_repr_MYBs.fasta** this file is generated if you choose to represent groups of paralogs by only one representative sequence (--collapse). The sequences contained in this FASTA file represent one group of paralogs. All singletons are included as well.
 
 * **08a_repr_ath_MYBs.fasta** this file contains all representative sequences (see #7) and also the _Arabidopsis thaliana_ MYB sequences. Therefore, this file is only generated if groups of paralogs are collapsed to one representative sequence (--collapse) and the necessary _Arabidopsis thaliana_ MYB sequences are provided (--ath).
 
