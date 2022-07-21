@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.216"
+__version__ = "v0.217"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -1220,7 +1220,7 @@ def main( arguments ):
 				with open( motif_check_file_summary, "w" ) as out1:
 					out1.write( "RefMember\t"+"\t".join(motif_names)+"\n" )
 					with open( motif_check_file_seqs, "w" ) as out2:
-						 out2.write( "RefMember\t"+"\t".join(motif_names)+"\n" )
+						out2.write( "RefMember\t"+"\t".join(motif_names)+"\n" )
 						candidates = list( sorted( clean_mybs.keys() ) )
 						for candidate in candidates:
 							new_line_details = [ subject_name_mapping_table[ candidate ] ]
