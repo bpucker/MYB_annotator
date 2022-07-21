@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.215"
+__version__ = "v0.216"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -615,7 +615,7 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 			out.write ( "RAxML version detection failed.\n" )	#if no RAxML installation was detected
 		try:
 			hmmsearch_version_raw = subprocess.Popen( args=hmmsearch + " -h", stdout=subprocess.PIPE, shell=True )
-			hmmsearch_version = str( raxml_version_raw.stdout.read() ).strip().split('\n')[1]
+			hmmsearch_version = str( hmmsearch_version_raw.stdout.read() ).strip().split('\n')[1]
 			out.write ( "hmmsearch version: " + ( hmmsearch_version ) + "...\n" )	#remove characters introduced through binary
 		except:
 			out.write ( "hmmsearch version detection failed.\n" )	#if no hmmsearch installation was detected
@@ -1212,14 +1212,16 @@ def main( arguments ):
 			
 			# --- check for different motifs --- #
 			motif_check_file_summary = result_folder + name + "04b_motif_check.txt"	#produce table with motif (0/1)
-			motif_check_file_seqs = result_folder + name + "04b_motif_check.txt"	#produce table with motif sequences
+			motif_check_file_seqs = result_folder + name + "04b_motif_check_details.txt"	#produce table with motif sequences
 			if len( motifs_file ) > 0:
 				motifs = load_motifs_from_file( motifs_file )
-				motif_check_results = motif_check( seqs, motifs )	#prim key = seqID, secondary key = motifs
+				motif_check_results = motif_check( clean_mybs, motifs )	#prim key = seqID, secondary key = motifs
 				motif_names = list( sorted( list( motifs.keys() ) ) )
 				with open( motif_check_file_summary, "w" ) as out1:
+					out1.write( "RefMember\t"+"\t".join(motif_names)+"\n" )
 					with open( motif_check_file_seqs, "w" ) as out2:
-						candidates = list( sorted( clean_candidate_myb_sequences.keys() ) )
+						 out2.write( "RefMember\t"+"\t".join(motif_names)+"\n" )
+						candidates = list( sorted( clean_mybs.keys() ) )
 						for candidate in candidates:
 							new_line_details = [ subject_name_mapping_table[ candidate ] ]
 							new_line_summary = [ subject_name_mapping_table[ candidate ] ]
@@ -1229,6 +1231,8 @@ def main( arguments ):
 									new_line_summary.append( "1" )
 								else:
 									new_line_summary.append( "0" )
+							out1.write("\t".join(new_line_summary) + "\n")
+							out2.write("\t".join(new_line_details) + "\n")
 			
 			# --- construct a final tree --- #
 			fin_aln_input_file = job_output_folder + "fin_alignment_input.fasta"
