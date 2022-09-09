@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.217"
+__version__ = "v0.22"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -61,11 +61,11 @@ except ImportError:
 def load_BLAST_results( blast_result_file, similarity_cutoff, possibility_cutoff, length_cutoff ):
 	"""! @brief load BLAST results """
 	
-	valid_blast_hits = {}
+	valid_blast_hits = {}	#bait IDs as key
 	with open( blast_result_file, "r" ) as f:
 		line = f.readline()
 		while line:
-			parts = line.strip().split('\t')
+			parts = line.strip().split('\t')  #qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore
 			if float( parts[2] ) > similarity_cutoff:	#similarity is sufficient
 				if float( parts[3] ) > length_cutoff:	#substantial part of query is matched
 					try:
@@ -1105,7 +1105,7 @@ def main( arguments ):
 					p = subprocess.Popen( args= makeblastdb + " -in " + subject_file + " -out " + blast_db + " -dbtype prot", shell=True )
 					p.communicate()
 					
-					p = subprocess.Popen( args= "blastp -query " + bait_seq_file + " -db " + blast_db + " -out " + seq_search_result_file + " -outfmt 6 -evalue 0.001 -num_threads " + str( cpub ), shell=True )
+					p = subprocess.Popen( args= blastp + " -query " + bait_seq_file + " -db " + blast_db + " -out " + seq_search_result_file + " -outfmt 6 -evalue 0.001 -num_threads " + str( cpub ), shell=True )
 					p.communicate()
 				else:
 					p = subprocess.Popen( args= hmmsearch + " --tblout " + seq_search_result_file + " " + myb_bait_hmm + " " + subject_file + " > " + job_output_folder+"hmmsearch_waste.txt", shell=True )
