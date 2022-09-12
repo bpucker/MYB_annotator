@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.22"
+__version__ = "v0.23"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -606,7 +606,12 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 			out.write ( "MAFFT version: " + str( mafft_version )[2:-3] + "\n" )	#remove characters introduced through binary
 		except:
 			out.write ( "MAFFT version detection failed.\n" )	#if no MAFFT installation was detected
-		out.write ( "FastTree version: PLEASE_ADD_MANUALLY\n"  )	#version not available via command
+		try:
+			fasttree_version_raw = subprocess.Popen( args=fasttree + " -help", stderr=subprocess.PIPE, shell=True )
+			fasttree_version = fasttree_version_raw.stderr.read()
+			out.write ( "FastTree version: " + str( fasttree_version )[10:18] + "\n" )	#remove characters introduced through binary
+		except:
+			out.write ( "FastTree version detection failed.\n"  )	#version not available via command
 		try:
 			raxml_version_raw = subprocess.Popen( args=raxml + " --version", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True )
 			raxml_version = str( raxml_version_raw.stdout.read() ).strip()
