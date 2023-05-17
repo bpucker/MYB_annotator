@@ -1,7 +1,7 @@
 # Automatic annotation of MYBs
 [![DOI](https://zenodo.org/badge/391274179.svg)](https://zenodo.org/badge/latestdoi/391274179)
 
-### MYB_annotator is available on our [webserver](http://193.175.249.50/MYB_annotator/) ###
+### MYB_annotator is available on our [webserver](https://pbb-tools.de/MYB_annotator/) ###
 
 ### Please get in touch if you need help running the MYB annotator on your own dataset: [Boas Pucker (email)](mailto:b.pucker@tu-braunschweig.de?subject=[GitHub]MYB_annotator) ###
 
