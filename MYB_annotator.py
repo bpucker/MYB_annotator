@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.23"
+__version__ = "v0.232"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -36,7 +36,7 @@ __usage__ = """
 					--fasttree <PATH_TO_FASTTREE>[fasttree]
 					--raxml <PATH_TO_RAXML>[raxml]				
 					
-					--simcutp <BLASTP_SIMILARITY_CUTOFF>[0.8]
+					--simcutp <BLASTP_SIMILARITY_CUTOFF>[60]
 					--poscutp <BLASTP_POSSIBLE_HIT_NUMBER_PER_BAIT_CUTOFF>[100]
 					--lencutp	<BLASTP_MIN_LENGTH_CUTOFF>[50]
 					
@@ -1020,7 +1020,7 @@ def main( arguments ):
 	if "--simcutp" in arguments:
 		similarity_cutoff_p = float( arguments[ arguments.index('--simcutp')+1 ] )
 	else:
-		similarity_cutoff_p=0.8
+		similarity_cutoff_p=60.0
 	if '--poscutp' in arguments:
 		possibility_cutoff_p = int( arguments[ arguments.index('--poscutp')+1 ] )
 	else:
@@ -1069,7 +1069,7 @@ def main( arguments ):
 	
 	for jidx, raw_subject_file in enumerate( raw_subject_files ):	#use jidx to generate unique IDs for all jobs
 		# --- prepare output folder for each job if there are multiple --- #
-		try:
+		#try:	#use this when running over multiple files
 			if len( raw_subject_files ) == 1:
 				job_output_folder = output_folder
 			else:
@@ -1299,8 +1299,8 @@ def main( arguments ):
 					if not os.path.isfile( repr_myb_domain_check_file ):
 						MYB_domain_check_wrapper( repr_clean_myb_file, repr_myb_domain_check_file, repr_myb_domain_fasta_file, repr_myb_domain_doc_file, subject_name_mapping_table )
 
-		except:
-			print( "ERROR: analysis failed for " + raw_subject_file )
+		#except:	#use this when running over multiple files
+		#	print( "ERROR: analysis failed for " + raw_subject_file )
 	# --- summarize stats of all species --- #
 	if len( raw_subject_files ) > 1:	#only useful if there are more than one species
 		summary_file4 = output_folder + "4_domain_detection_summary.txt"
