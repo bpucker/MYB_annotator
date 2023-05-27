@@ -93,7 +93,7 @@ Optional:
 --fasttree      STR     Path to FastTree [fasttree]
 --raxml         STR     Path to RAxML [raxml]				
 					
---simcutp       FLOAT   BLASTp similarity cutoff [0.8]
+--simcutp       FLOAT   BLASTp similarity cutoff [60]
 --poscutp       INT     Max number of BLASTp hits per bait [100]
 --lencutp	INT     Min BLASTp alignment length [75]
 
@@ -149,7 +149,7 @@ Optional:
 
 `--raxml` specifies the full path to [RAxML](https://doi.org/10.1093/bioinformatics/btz305).
 
-`--simcutp` specifies the minimal similarity of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 0.8 (80%).
+`--simcutp` specifies the minimal similarity of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 60.0 (60% similarity).
 
 `--poscutp` specifies the maximal number of hits (possibilities) per bait sequence in the BLASTp analysis. Default: 100.
 
