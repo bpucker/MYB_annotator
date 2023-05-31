@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.232"
+__version__ = "v0.233"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -34,7 +34,7 @@ __usage__ = """
 					--makeblastdb <PATH_TO_AND_INCLUDING_BINARY>[makeblastdb]
 					
 					--fasttree <PATH_TO_FASTTREE>[fasttree]
-					--raxml <PATH_TO_RAXML>[raxml]				
+					--raxml <PATH_TO_RAXML>[raxml-ng]				
 					
 					--simcutp <BLASTP_SIMILARITY_CUTOFF>[60]
 					--poscutp <BLASTP_POSSIBLE_HIT_NUMBER_PER_BAIT_CUTOFF>[100]
@@ -1000,7 +1000,7 @@ def main( arguments ):
 	if '--raxml' in arguments:
 		raxml = arguments[ arguments.index('--raxml')+1 ]
 	else:
-		raxml = "raxml"
+		raxml = "raxml-ng"
 	if "--fasttree" in arguments:
 		fasttree = arguments[ arguments.index('--fasttree')+1 ]
 	else:
