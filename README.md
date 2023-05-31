@@ -91,7 +91,7 @@ Optional:
 --hmmsearch     STR     Path to hmmsearch [hmmsearch]
 --makeblastdb   STR     Path to makeblastdb [makeblastdb]			
 --fasttree      STR     Path to FastTree [fasttree]
---raxml         STR     Path to RAxML [raxml]				
+--raxml         STR     Path to RAxML [raxml-ng]				
 					
 --simcutp       FLOAT   BLASTp similarity cutoff [60]
 --poscutp       INT     Max number of BLASTp hits per bait [100]
@@ -147,7 +147,7 @@ Optional:
 
 `--fasttree` specifies the full path to [FastTree2](https://doi.org/10.1371/journal.pone.0009490). This is required if fasttree is not included in the PATH variable. If in doubt, please specify the full path.
 
-`--raxml` specifies the full path to [RAxML](https://doi.org/10.1093/bioinformatics/btz305).
+`--raxml` specifies the full path to [RAxML-NG](https://doi.org/10.1093/bioinformatics/btz305).
 
 `--simcutp` specifies the minimal similarity of BLASTp hits to be considered in the initial identification of MYB candidates. Default: 60.0 (60% similarity).
 
