@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.233"
+__version__ = "v0.235"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -276,6 +276,7 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 	"""! @brief clean input FASTA file """
 	
 	forbidden_characters = [ ";", ":", "(", ")", "_", "=" ]
+	tab_replacement = False
 	
 	with open( mapping_table, "w" ) as out:
 		out.write( "InitialID\tCleanID\n" )
@@ -287,7 +288,9 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 					header = header.split(' ')[0]
 					if "\t" in header:
 						header = header.split('\t')[0]
-			out.write( header + "\t" )
+			if "\t" in header:
+				tab_replacement = True	#set variable to true to trigger warning
+			out.write( header.replace("\t", "   ") + "\t" )
 			if " " in header:
 				header = header.split(' ')[0]
 			if "\t" in header:
@@ -307,7 +310,9 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 								header = header.split(' ')[0]
 								if "\t" in header:
 									header = header.split('\t')[0]
-						out.write( header + "\t" )
+						if "\t" in header:
+							tab_replacement = True	#set variable to true to trigger warning
+						out.write( header.replace("\t", "   ") + "\t" )
 						if " " in header:
 							header = header.split(' ')[0]
 						if "\t" in header:
@@ -337,6 +342,10 @@ def clean_input_FASTA_file( raw_subject_file, subject_file, mapping_table, cds_i
 		with open( subject_file, "w" ) as out:	#construct file with clean PEPs
 			for key in sequences.keys():
 				out.write( '>' + key + "\n" + sequences[ key ] + "\n" )
+	
+	if tab_replacement:	#show warning that tabs have been replaced by three spaces
+		sys.stdout.write( "WARNING: tabs in input sequence names have been replaced by three spaces. Please provide input sequences without tabs or spaces in their names.\n" )
+		sys.stdout.flush()
 
 
 def load_ref_mybs( ref_mybs_file ):
@@ -911,7 +920,8 @@ def load_hmmsearch_results( seq_search_result_file ):
 				elif " " in line:
 					hmm_search_results.update( { line.split(' ')[0]: None } )
 				else:
-					print( line )
+					sys.stdout.write( line )
+					sys.stdout.flush()
 			line = f.readline()
 	return hmm_search_results
 
@@ -1175,7 +1185,8 @@ def main( arguments ):
 			else:
 				myb_classification = load_myb_classification_from_file( tmp_result_table )
 			clean_mybs = load_sequences( clean_mybs_file )
-			print( clean_mybs.keys() )
+			#sys.stdout.write( clean_mybs.keys() )
+			#sys.stdout.flus()
 			if len( list( clean_mybs.keys() ) ) < 1:
 				sys.exit( "ERROR: no MYBs detected." )
 			
@@ -1300,7 +1311,8 @@ def main( arguments ):
 						MYB_domain_check_wrapper( repr_clean_myb_file, repr_myb_domain_check_file, repr_myb_domain_fasta_file, repr_myb_domain_doc_file, subject_name_mapping_table )
 
 		#except:	#use this when running over multiple files
-		#	print( "ERROR: analysis failed for " + raw_subject_file )
+		#	sys.stdout.write( "ERROR: analysis failed for " + raw_subject_file )
+		# sys.stdout.flush()
 	# --- summarize stats of all species --- #
 	if len( raw_subject_files ) > 1:	#only useful if there are more than one species
 		summary_file4 = output_folder + "4_domain_detection_summary.txt"
