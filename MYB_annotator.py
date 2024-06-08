@@ -1,10 +1,10 @@
 ### Boas Pucker ###
-### b.pucker@tu-braunschweig.de ###
+### b.pucker@tu-bs.de ###
 ### some functions were copied from KIPEs: https://doi.org/10.3390/plants9091103 and MaMYB: https://doi.org/10.1371/journal.pone.0239275 ###
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v0.235"
+__version__ = "v1.0.1"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -45,7 +45,7 @@ __usage__ = """
 					--minneighbours <MINIMAL_NUMBER_OF_NEIGHBOURS> [0]
 					--paralogdist <DISTANCE_OF_PARALOGS_IN_MASKING_STEP> [10]
 					
-					bug reports and feature requests: b.pucker@tu-braunschweig.de
+					bug reports and feature requests: b.pucker@tu-bs.de
 					"""
 
 import os, glob, sys, re, subprocess, dendropy
@@ -564,7 +564,7 @@ def generate_documentation_file( 	doc_file, bait_seq_file, info_file, output_fol
 	"""! @brief write documentation file with specified inputs and parameters """
 	
 	with open( doc_file, "w" ) as out:
-		out.write( "Please cite 'Pucker B (2021). Automatic identification and annotation of MYB gene family members in plants. doi:10.1101/2021.10.16.464636' when using MYB_annotator.py.\n\n" )
+		out.write( "Please cite 'Pucker B (2022). Automatic identification and annotation of MYB gene family members in plants. BMC Genomics 23, 220 (2022). doi: 10.1186/s12864-022-08452-5' when using MYB_annotator.py.\n\n" )
 		out.write( "MYB_annotator.py version: " + __version__ + "\n" )
 		bait_seq_file_md5 = md5_calculator( bait_seq_file )
 		out.write( "MYB bait file: " + bait_seq_file + "\t" + bait_seq_file_md5 + "\n" )
