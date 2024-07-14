@@ -157,7 +157,7 @@ Optional:
 
 `--numneighbours` this specifies the number of neighbouring sequences in a phylogenetic tree that will be considered for the classification as MYB or MYB-like, respectively. Default: 10.
 
-`--neighbourdist` specifies the factor by which the average branch length is multiplied when deciding about the consideration of neighbouring sequences, because sequences sitting on very long branches are ignored in this step. Increasing this value will enhance the sensitivity of sequence detection at the cost of specificity. Larger values should be tested when looking for completely new MYB clades in phylogenetic lineages that are not well covered by the collection of bait sequences. Default: 3.
+`--neighbourdist` specifies the factor by which the average branch length is multiplied when deciding about the consideration of neighbouring sequences, because sequences sitting on very long branches are ignored in this step. Increasing this value will enhance the sensitivity of sequence detection at the cost of specificity. Larger values should be tested when looking for completely new MYB clades in phylogenetic lineages that are not well covered by the collection of bait sequences. Default: 3. When searching for novel MYB clades that might not contain a single reference MYB sequence, increasing this value to 10 is recommended.
 
 `--minneighbours` specifies the minimal number of neighbours that is required for the classification of sequences. If there are no close neighbours, a sequence might be sitting at an extremely long branch. Therefore, it can be appropriate to exclude sequences without any neighbouring sequences from the set of clean MYBs. Default: 0.
 
