@@ -9,7 +9,7 @@
 This tool allows an automatic identification and analysis of MYBs in a CDS or peptide sequence collection. Since the quality of structural annotation has substantially improved during the last years, the focus can now shift towards functional annotation. RNA-seq and long read sequencing of transcripts were fundamental for this development. There are numerous publications about R2R3-MYBs in various plant species. This tools allows the automatic investigation of the MYB gene family in any new species. The provided MYB sequences should be sufficient as baits in most plant species thus no manual preparation of input files is required. Results are a FASTA file containing the bona fide MYB sequences and a summary table with additional details. MYB candidates are screened for the presence of the conserved repeats and also for many other motifs. The function of all MYB candidates is predicted based on orthology to a previously characterized sequence (often in _Arabidopsis thaliana_).
 
 
-<img alt="MYB_annotator workflow" src="https://github.com/bpucker/MYB_annotator/blob/main/MYB_annotator.png?raw=true" width="50%" height="50%">
+<img alt="MYB_annotator workflow" src="https://github.com/bpucker/MYB_annotator/blob/main/MYB_annotator.png?raw=true" width="600">
 
 
 ## Installation ##
