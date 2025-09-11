@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v1.0.1"
+__version__ = "v1.0.2"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -937,7 +937,7 @@ def main( arguments ):
 	else:
 		subject_file_dir = arguments[ arguments.index('--subjectdir')+1 ]
 		if not subject_file_dir[-1] == "/":
-			subject_file_dir + "/"
+			subject_file_dir += "/"
 		extensions = [ ".fasta", ".fa", ".fas", ".FASTA", ".FA", ".FAS", ".fna", ".FNA", ".cds", ".CDS", ".pep", ".PEP" ]
 		raw_subject_files = [ ]
 		for each in extensions:
