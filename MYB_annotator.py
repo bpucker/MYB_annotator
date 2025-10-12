@@ -4,7 +4,7 @@
 
 ### WARNING: do not use underscores in the bait MYB IDs ###
 
-__version__ = "v1.0.2"
+__version__ = "v1.0.3"
 
 __usage__ = """
 					python3 MYB_annotator.py
@@ -41,7 +41,7 @@ __usage__ = """
 					--lencutp	<BLASTP_MIN_LENGTH_CUTOFF>[50]
 					
 					--numneighbours <NUMBER_OF_NEIGHBOURS_FOR_CLASSIFICATION> [10]
-					--neighbourdist <NEIGHBOUR_DISTANCE> [3]
+					--neighbourdist <NEIGHBOUR_DISTANCE> [10]
 					--minneighbours <MINIMAL_NUMBER_OF_NEIGHBOURS> [0]
 					--paralogdist <DISTANCE_OF_PARALOGS_IN_MASKING_STEP> [10]
 					
@@ -1059,7 +1059,7 @@ def main( arguments ):
 	if '--neighbourdist' in arguments:
 		mean_factor_cutoff = float( arguments[ arguments.index('--neighbourdist')+1 ] )
 	else:
-		mean_factor_cutoff=3.0	#X*average nearest neighbor distance
+		mean_factor_cutoff=10.0	#X*average nearest neighbor distance
 	
 	if "--minneighbours" in arguments:
 		min_neighbour_cutoff = int( arguments[ arguments.index('--minneighbours')+1 ] )
